@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "leonardoai",
+      "source": "@leonardoai/v1.0#28807z41owlgnis8jg",
+      "integrity": "sha512-OLM3VWb1HKeSXubSNcueATXWuMSkxKDLNAsuqQjQuAWWswaFpqOSxHpgxFBgak4ffTFm14gMiJ0SaxeGaaAv0Q==",
+      "installerVersion": "6.1.0"
+    }
+  ]
+}
