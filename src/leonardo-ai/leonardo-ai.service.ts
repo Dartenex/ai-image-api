@@ -43,6 +43,7 @@ export class LeonardoAiService {
           id: generationId,
         });
       });
+      console.log(generationId, result.data);
     } while (result.data.generations_by_pk.status !== 'COMPLETE');
     return result.data;
   }

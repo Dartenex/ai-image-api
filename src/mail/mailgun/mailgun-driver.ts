@@ -30,8 +30,6 @@ export class MailgunDriver {
       subject: data.subject,
       text: data.text,
     };
-    const res = await this.client.messages.create(this.domain, messageData);
-    console.log(res);
-    // await this.client.messages.create(this.domain, messageData);
+    await this.client.messages.create(this.domain, messageData);
   }
 }

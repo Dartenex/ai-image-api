@@ -1,6 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
+import { existsSync, mkdirSync } from 'fs';
+import { storageDir } from '@utils';
+
+function initDirs() {
+  if (!existsSync(storageDir)) {
+    mkdirSync(storageDir);
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +21,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  initDirs();
 
   await app.listen(3000);
 }

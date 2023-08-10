@@ -33,4 +33,12 @@ export class MailService {
       }
     } while (!success && attempts !== 0);
   }
+
+  public async sendGreetingsMessage(toEmail: string, prompt: string) {
+    await this.driver.sendMessage({
+      text: `Hello! Your generation request for query - '${prompt}'is in progress! Estimated time to deliver 5-10 minutes. Thank you for your patience.`,
+      subject: 'GIO AI | Generation request in progress',
+      to: [toEmail],
+    });
+  }
 }

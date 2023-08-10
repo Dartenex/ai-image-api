@@ -24,4 +24,9 @@ export class GeneratorController {
       end: end.toISOString(),
     };
   }
+
+  @Get('test-queue-scaling')
+  public async test() {
+    await this.generatorService.test();
+  }
 }

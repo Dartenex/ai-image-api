@@ -28,6 +28,7 @@ export class MidjourneyService {
       }
       if (response.progress === 100) {
         console.log('PROGRESS IS 100');
+        console.log(response);
         return response.response.imageUrls;
       }
       do {

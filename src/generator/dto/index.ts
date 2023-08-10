@@ -7,3 +7,9 @@ export interface ResultImage {
   createdAt: string;
   isUpscaled: boolean;
 }
+
+export interface ImageToSave extends ResultImage {
+  name: string;
+  email: string;
+  requestId: string;
+}
