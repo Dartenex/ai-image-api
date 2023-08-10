@@ -10,6 +10,7 @@ import { StorageService } from '../storage/storage.service';
 import { createHash } from 'crypto';
 import { MongodbService } from '../mongodb/mongodb.service';
 import { logTime } from '@utils';
+import { WithId } from 'mongodb';
 
 @Injectable()
 @Processor('generator')
@@ -26,10 +27,10 @@ export class GeneratorService {
   ) {}
 
   public async test() {
-    await this.scalingQueue.add({
-      message: 'Some message for scaling!',
-    });
-    console.log('dispatched scalign job');
+    // await this.scalingQueue.add({
+    //   message: 'Some message for scaling!',
+    // });
+    // console.log('dispatched scalign job');
   }
 
   @Process()
@@ -44,7 +45,7 @@ export class GeneratorService {
     this.sendGreetingMal(job.data).then(() => {
       this.generateMainImages(job.data).then((images: ResultImage[]) => {
         this.saveImages(images, job.data, requestId).then(() => {
-          this.sendMessageToUser(job.data, images).then(() => {
+          this.sendMessageToUser(job.data, requestId).then(() => {
             const end = new Date();
             console.log(
               `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
@@ -56,29 +57,6 @@ export class GeneratorService {
       });
     });
   }
-
-  // @Process('generator')
-  // public async queueProcessor(job: Job<MainGeneratorDto>) {
-  //   const requestId = this.getRequestId(job.data.user.email, job.data.query);
-  //   const start = new Date();
-  //   console.log(
-  //     `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
-  //       job.data.user.email
-  //     }`,
-  //   );
-  //   await this.sendGreetingMal(job.data);
-  //   const generatedImages: ResultImage[] = await this.generateMainImages(
-  //     job.data,
-  //   );
-  //   await this.saveImages(generatedImages, job.data, requestId);
-  //   await this.sendMessageToUser(job.data, generatedImages);
-  //   const end = new Date();
-  //   console.log(
-  //     `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
-  //       job.data.user.email
-  //     }`,
-  //   );
-  // }
 
   private async saveImages(
     images: ResultImage[],
@@ -140,10 +118,21 @@ export class GeneratorService {
 
   private async sendMessageToUser(
     dto: MainGeneratorDto,
-    images: ResultImage[],
+    requestId: string,
   ) {
+    const requestImages = await this.mongoDb
+      .imagesCollection()
+      .find({ requestId: requestId })
+      .toArray();
+
+    const processedImages: ResultImage[] = requestImages.map(
+      (image: WithId<ImageToSave>) => ({
+        ...image,
+        url: `https://gio-ai.s3.amazonaws.com/${image.name}`,
+      }),
+    );
     await this.mailService.sendGenerationMail({
-      images,
+      images: processedImages,
       email: dto.user.email,
     });
   }
