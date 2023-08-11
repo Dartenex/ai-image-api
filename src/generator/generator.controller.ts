@@ -7,13 +7,16 @@ export class GeneratorController {
   public constructor(private generatorService: GeneratorService) {}
 
   @Get('main')
-  public async main(@Query('query') query: string) {
+  public async main(
+    @Query('query') query: string,
+    @Query('email') email: string,
+  ) {
     const start = new Date();
     const dto: MainGeneratorDto = {
       query: query,
       user: {
         userAgent: 'some agent',
-        email: 'dimavfox@gmail.com',
+        email: email,
       },
     };
     await this.generatorService.dispatchGenerationJob(dto);

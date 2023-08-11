@@ -42,20 +42,25 @@ export class GeneratorService {
         job.data.user.email
       }`,
     );
-    this.sendGreetingMal(job.data).then(() => {
-      this.generateMainImages(job.data).then((images: ResultImage[]) => {
-        this.saveImages(images, job.data, requestId).then(() => {
-          this.sendMessageToUser(job.data, requestId).then(() => {
-            const end = new Date();
-            console.log(
-              `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
-                job.data.user.email
-              }`,
-            );
+    this.sendGreetingMal(job.data)
+      .then(() => {
+        this.generateMainImages(job.data).then((images: ResultImage[]) => {
+          this.saveImages(images, job.data, requestId).then(() => {
+            this.sendMessageToUser(job.data, requestId).then(() => {
+              const end = new Date();
+              console.log(
+                `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
+                  job.data.user.email
+                }`,
+              );
+            });
           });
         });
+      })
+      .catch((e) => {
+        console.log('ERROR DURING GENERATION JOB');
+        console.log(e);
       });
-    });
   }
 
   private async saveImages(
@@ -116,10 +121,7 @@ export class GeneratorService {
     return allImages;
   }
 
-  private async sendMessageToUser(
-    dto: MainGeneratorDto,
-    requestId: string,
-  ) {
+  private async sendMessageToUser(dto: MainGeneratorDto, requestId: string) {
     const requestImages = await this.mongoDb
       .imagesCollection()
       .find({ requestId: requestId })
