@@ -36,7 +36,7 @@ export class MailService {
 
   public async sendGreetingsMessage(toEmail: string, prompt: string) {
     await this.driver.sendMessage({
-      text: `Hello! Your generation request for query - '${prompt}'is in progress! Estimated time to deliver 5-10 minutes. Thank you for your patience.`,
+      text: `Hello! Your generation request for query - <b>'${prompt}'</b> is in progress! Estimated time to deliver 5-10 minutes. Thank you for your patience.`,
       subject: 'GIO AI | Generation request in progress',
       to: [toEmail],
     });
