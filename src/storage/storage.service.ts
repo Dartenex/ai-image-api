@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, HeadObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import puppeteer from 'puppeteer';
 import { writeFileSync, readFileSync, rmSync } from 'fs';
@@ -17,11 +17,12 @@ export class StorageService {
     this.s3Bucket = this.config.get<string>('AWS_S3_BUCKET');
   }
 
-  public async uploadFile(name: string) {
+  public async uploadFile(name: string, extension: string) {
     const uploadCommand = new PutObjectCommand({
       Bucket: this.s3Bucket,
       Key: `images/${name}`,
       Body: readFileSync(this.getFilePath(name)),
+      ContentType: `image/${extension}`,
     });
     const res = await this.client.send(uploadCommand);
     console.log(res);
@@ -35,7 +36,7 @@ export class StorageService {
     const view = await page.goto(link);
     writeFileSync(this.getFilePath(name), await view.buffer());
     await browser.close();
-    await this.uploadFile(name);
+    await this.uploadFile(name, this.getExtension(name));
     this.deleteFile(name);
   }
 
@@ -45,5 +46,10 @@ export class StorageService {
 
   private getFilePath(name: string): string {
     return `${storageDir}/${name}`;
+  }
+
+  private getExtension(link: string): string {
+    const regExp = new RegExp(/\.(?<extension>(png|jpg|jpeg)$)/);
+    return link.match(regExp).groups.extension;
   }
 }
