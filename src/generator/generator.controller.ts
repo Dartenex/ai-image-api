@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import { MainGeneratorDto } from '@generator/dto';
+import { Response } from 'express';
 
 @Controller('generator')
 export class GeneratorController {
@@ -10,7 +11,13 @@ export class GeneratorController {
   public async main(
     @Query('query') query: string,
     @Query('email') email: string,
+    @Res() response: Response,
   ) {
+    if (!email) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        error: 'Email is required',
+      });
+    }
     const start = new Date();
     const dto: MainGeneratorDto = {
       query: query,
