@@ -28,11 +28,11 @@ export class GeneratorController {
     };
     await this.generatorService.dispatchGenerationJob(dto);
     const end = new Date();
-    return {
+    return response.status(HttpStatus.OK).json({
       result: 'Generation job dispatched',
       start: start.toISOString(),
       end: end.toISOString(),
-    };
+    });
   }
 
   @Get('test-queue-scaling')
