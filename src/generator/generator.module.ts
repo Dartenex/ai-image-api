@@ -18,10 +18,6 @@ const queueOptions: QueueOptions = {
     attempts: 2,
     delay: 1,
   },
-  limiter: {
-    max: 2,
-    duration: 10000,
-  },
 };
 
 @Module({
@@ -48,10 +44,6 @@ const queueOptions: QueueOptions = {
           port: configService.get<number>('REDIS_PORT'),
         },
         ...queueOptions,
-        limiter: {
-          max: 5,
-          duration: 600 * 1000 + 120 * 1000,
-        },
       }),
       name: 'generator',
     }),

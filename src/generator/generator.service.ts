@@ -45,6 +45,8 @@ export class GeneratorService {
     this.sendGreetingMal(job.data)
       .then(() => {
         this.generateMainImages(job.data).then((images: ResultImage[]) => {
+          console.log('\nIMAGES GENERATED');
+          console.log('\nSAVING IMAGES');
           this.saveImages(images, job.data, requestId).then(() => {
             this.sendMessageToUser(job.data, requestId).then(() => {
               const end = new Date();
