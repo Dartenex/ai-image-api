@@ -18,7 +18,7 @@ export class MidjourneyService {
       });
       const messageId = msgIdResponse.messageId;
       let response;
-      await delayCallback(1500, async () => {
+      await delayCallback(10000, async () => {
         response = await this.client.getMessageAndProgress(messageId);
       });
       if (!messageId) {
@@ -32,7 +32,7 @@ export class MidjourneyService {
         return response.response.imageUrls;
       }
       do {
-        await delayCallback(1500, async () => {
+        await delayCallback(10000, async () => {
           response = await this.client.getMessageAndProgress(messageId);
         });
         console.log(messageId, response);
@@ -48,7 +48,7 @@ export class MidjourneyService {
     const images = [];
     for (const query of queries) {
       const result = await delayCallback(
-        1500,
+        10000,
         async () => await this.generateImageByQuery(query),
       );
       images.push(result);

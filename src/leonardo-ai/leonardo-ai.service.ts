@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as sdk from 'api';
 import { ConfigService } from '@nestjs/config';
-import { delayCallback, randomMilliseconds } from '@utils';
+import { delayCallback } from '@utils';
 import { LeonardoImage, UpscaleImage } from './dto';
 import { ResultImage } from '@generator/dto';
 
@@ -38,7 +38,7 @@ export class LeonardoAiService {
       id: generationId,
     });
     do {
-      result = await delayCallback(1500, async () => {
+      result = await delayCallback(10000, async () => {
         return await this.sdk.getGenerationById({
           id: generationId,
         });
@@ -68,7 +68,7 @@ export class LeonardoAiService {
     let result = null;
     let completedImages = [];
     do {
-      result = await delayCallback(randomMilliseconds(), async () => {
+      result = await delayCallback(10000, async () => {
         return await this.sdk.getVariationById({ id });
       });
       completedImages = result.data.generated_image_variation_generic.filter(
