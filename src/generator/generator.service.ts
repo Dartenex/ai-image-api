@@ -110,7 +110,8 @@ export class GeneratorService {
     const allImages: ResultImage[] = [...leonardoUpscaledImages];
     midjourneyImages.forEach((images: any[]) => {
       console.log('IMAGES MAP', images);
-      const imgs = images.map(
+      const imgsToProcess = images ?? [];
+      const imgs = imgsToProcess.map(
         (i: string): ResultImage => ({
           url: i,
           isUpscaled: false,
