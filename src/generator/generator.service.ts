@@ -132,7 +132,7 @@ export class GeneratorService {
     const processedImages: ResultImage[] = requestImages.map(
       (image: WithId<ImageToSave>) => ({
         ...image,
-        url: `https://gio-ai.s3.amazonaws.com/${image.name}`,
+        url: `https://gio-ai-api-bucket.s3.amazonaws.com/images/${image.name}`,
       }),
     );
     await this.mailService.sendGenerationMail({

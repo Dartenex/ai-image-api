@@ -20,7 +20,7 @@ export class StorageService {
   public async uploadFile(name: string) {
     const uploadCommand = new PutObjectCommand({
       Bucket: this.s3Bucket,
-      Key: name,
+      Key: `/images/${name}`,
       Body: readFileSync(this.getFilePath(name)),
     });
     const res = await this.client.send(uploadCommand);
