@@ -98,9 +98,9 @@ export class GeneratorService {
       dto.query,
     );
     console.log(textPrompts);
-    const midjourneyImages = await this.midjourneyAi.getImagesByQueries(
-      textPrompts,
-    );
+    const midjourneyImages =
+      (await this.midjourneyAi.getImagesByQueries(textPrompts)) ?? [];
+    console.log('MIDJOURNEY IMAGES', midjourneyImages);
     const leonardoResult = await this.leonardoAi.generateByQueries(textPrompts);
     const leonardoUpscaledImages: ResultImage[] =
       await this.leonardoAi.upscaleImages(leonardoResult);

@@ -54,6 +54,7 @@ export class MidjourneyService {
       images.push(result);
       console.log(`QUERY ${query} finished`);
     }
+    console.log('getImagesByQueries', images);
     return images;
   }
 }
