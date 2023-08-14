@@ -13,3 +13,5 @@ export interface ImageToSave extends ResultImage {
   email: string;
   requestId: string;
 }
+
+export * from './responses';

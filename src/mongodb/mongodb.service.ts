@@ -16,6 +16,13 @@ export class MongodbService {
     );
   }
 
+  public async randomImageDocs(amount: number): Promise<string[]> {
+    const pipeline = [{ $sample: { size: amount } }];
+
+    const result = await this.imagesCollection().aggregate(pipeline).toArray();
+    return result.map((i: ImageToSave) => i.name);
+  }
+
   public imagesCollection(): Collection<ImageToSave> {
     return this.client
       .db(this.config.get<string>('MONGODB_DB_NAME'))

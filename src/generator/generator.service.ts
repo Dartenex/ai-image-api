@@ -9,7 +9,7 @@ import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
 import { createHash } from 'crypto';
 import { MongodbService } from '../mongodb/mongodb.service';
-import { logTime } from '@utils';
+import { delayCallback, logTime } from '@utils';
 import { WithId } from 'mongodb';
 
 @Injectable()
@@ -124,6 +124,16 @@ export class GeneratorService {
     return allImages;
   }
 
+  public async getRandomPics(amount: number): Promise<string[]> {
+    const names = await this.mongoDb.randomImageDocs(amount);
+    return names.map((name: string) => this.getImgUrlByName(name));
+  }
+
+  public async upscaleImage(url: string): Promise<string> {
+    await delayCallback(2345, () => 1);
+    return url;
+  }
+
   private async sendMessageToUser(dto: MainGeneratorDto, requestId: string) {
     const requestImages = await this.mongoDb
       .imagesCollection()
@@ -133,13 +143,17 @@ export class GeneratorService {
     const processedImages: ResultImage[] = requestImages.map(
       (image: WithId<ImageToSave>) => ({
         ...image,
-        url: `https://gio-ai-api-bucket.s3.amazonaws.com/images/${image.name}`,
+        url: this.getImgUrlByName(image.name),
       }),
     );
     await this.mailService.sendGenerationMail({
       images: processedImages,
       email: dto.user.email,
     });
+  }
+
+  private getImgUrlByName(name: string): string {
+    return `https://gio-ai-api-bucket.s3.amazonaws.com/images/${name}`;
   }
 
   private async saveInDb(images: ImageToSave[]) {
