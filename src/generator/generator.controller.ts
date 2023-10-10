@@ -14,7 +14,7 @@ import {
   MainResponse,
   PicturesResponse,
   UpscaleImageBody,
-  UpscaleImageResponse
+  UpscaleImageResponse,
 } from '@generator/dto';
 import { Response } from 'express';
 import {

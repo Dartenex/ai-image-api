@@ -11,6 +11,7 @@ function initDirs() {
 }
 
 async function bootstrap() {
+  const port: number = Number(process.env.APP_PORT) || 3000;
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
@@ -24,6 +25,7 @@ async function bootstrap() {
 
   initDirs();
 
-  await app.listen(3000);
+  await app.listen(port);
+  console.log(`App launched on port ${port}...`);
 }
 bootstrap();
