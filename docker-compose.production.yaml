@@ -10,8 +10,13 @@ services:
     depends_on:
       - app_redis
     command: npm run start:dev
+    deploy:
+      replicas: 4
+      mode: replicated
     volumes:
       - ./:/app
+
+
 
   app_redis:
     image: redis:latest

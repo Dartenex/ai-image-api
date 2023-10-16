@@ -23,39 +23,32 @@ export class GeneratorService {
     private mailService: MailService,
     private storageService: StorageService,
     private mongoDb: MongodbService,
-    @InjectQueue('scaling') private scalingQueue: Queue,
   ) {}
 
   @Process()
-  public queueProcessorCallbacks(job: Job<MainGeneratorDto>) {
-    const requestId = this.getRequestId(job.data.user.email, job.data.query);
-    const start = new Date();
-    console.log(
-      `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
-        job.data.user.email
-      }`,
-    );
-    this.sendGreetingMal(job.data)
-      .then(() => {
-        this.generateMainImages(job.data).then((images: ResultImage[]) => {
-          console.log('\nIMAGES GENERATED');
-          console.log('\nSAVING IMAGES');
-          this.saveImages(images, job.data, requestId).then(() => {
-            this.sendMessageToUser(job.data, requestId).then(() => {
-              const end = new Date();
-              console.log(
-                `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
-                  job.data.user.email
-                }`,
-              );
-            });
-          });
-        });
-      })
-      .catch((e) => {
-        console.log('ERROR DURING GENERATION JOB');
-        console.log(e);
-      });
+  public async queueProcessorCallbacks(job: Job<MainGeneratorDto>) {
+    try {
+      const requestId = this.getRequestId(job.data.user.email, job.data.query);
+      const start = new Date();
+      console.log(
+        `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
+          job.data.user.email
+        }`,
+      );
+      await this.sendGreetingMal(job.data);
+      const images: ResultImage[] = await this.generateMainImages(job.data);
+      await this.saveImages(images, job.data, requestId);
+      await this.sendMessageToUser(job.data, requestId);
+      const end = new Date();
+      console.log(
+        `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
+          job.data.user.email
+        }`,
+      );
+    } catch (e) {
+      console.log('ERROR DURING GENERATION JOB');
+      console.log(e);
+    }
   }
 
   private async saveImages(
@@ -92,17 +85,14 @@ export class GeneratorService {
     const textPrompts = await this.textGenerator.generatePromptsForImages(
       dto.query,
     );
-    console.log(textPrompts);
     const midjourneyImages =
       (await this.midjourneyAi.getImagesByQueries(textPrompts)) ?? [];
-    console.log('MIDJOURNEY IMAGES', midjourneyImages);
     const leonardoResult = await this.leonardoAi.generateByQueries(textPrompts);
     const leonardoUpscaledImages: ResultImage[] =
       await this.leonardoAi.upscaleImages(leonardoResult);
 
     const allImages: ResultImage[] = [...leonardoUpscaledImages];
     midjourneyImages.forEach((images: any[]) => {
-      console.log('IMAGES MAP', images);
       const imgsToProcess = images ?? [];
       const imgs = imgsToProcess.map(
         (i: string): ResultImage => ({
