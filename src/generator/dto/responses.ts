@@ -19,6 +19,7 @@ export class MainResponse {
 export class BadRequestResponse {
   @ApiProperty({
     type: String,
+    description: 'Description of the error!',
   })
   error: string;
 }
@@ -27,6 +28,7 @@ export class UpscaleImageBody {
   @ApiProperty({
     type: String,
     required: true,
+    description: '',
   })
   @IsString()
   @IsNotEmpty()

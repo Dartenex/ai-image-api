@@ -15,6 +15,7 @@ Content-Type: application/json
 // @no-log
 GET http://localhost:4050/generator/images/test-hui
 Accept: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 
 
 
