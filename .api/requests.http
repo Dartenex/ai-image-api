@@ -1,0 +1,30 @@
+###
+// @no-log
+POST http://localhost:4050/generator/main
+Accept: application/json
+Content-Type: application/json
+
+{
+  "prompt": "s",
+  "email": "s",
+  "userId": "s"
+}
+
+
+###
+// @no-log
+GET http://localhost:4050/generator/images/test-hui
+Accept: application/json
+
+
+
+###
+// @no-log
+POST http://localhost:4050/generator/upscale-image
+Content-Type: application/json
+Accept: application/json
+
+{
+  "callSid": "CA8a0af6ed2b02ba67b885a5f5842cdbdc",
+  "carName": "NEW CAR NAME 1"
+}

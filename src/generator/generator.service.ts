@@ -26,13 +26,6 @@ export class GeneratorService {
     @InjectQueue('scaling') private scalingQueue: Queue,
   ) {}
 
-  public async test() {
-    // await this.scalingQueue.add({
-    //   message: 'Some message for scaling!',
-    // });
-    // console.log('dispatched scalign job');
-  }
-
   @Process()
   public queueProcessorCallbacks(job: Job<MainGeneratorDto>) {
     const requestId = this.getRequestId(job.data.user.email, job.data.query);

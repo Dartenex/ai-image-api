@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 import { existsSync, mkdirSync } from 'fs';
 import { storageDir } from '@utils';
+import { ValidationPipe } from '@nestjs/common';
 
 function initDirs() {
   if (!existsSync(storageDir)) {
@@ -21,9 +22,11 @@ async function bootstrap() {
     .addTag('ai')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/api/docs', app, document);
 
   initDirs();
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(port);
   console.log(`App launched on port ${port}...`);

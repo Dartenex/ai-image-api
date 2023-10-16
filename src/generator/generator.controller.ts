@@ -2,23 +2,28 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
-  Res,
+  Req,
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
   BadRequestResponse,
+  GenerateReqInDto,
+  GetImagesByUserIdReqInDto,
   MainGeneratorDto,
   MainResponse,
   PicturesResponse,
   UpscaleImageBody,
   UpscaleImageResponse,
 } from '@generator/dto';
-import { Response } from 'express';
+import { Request } from 'express';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiOkResponse,
   ApiQuery,
 } from '@nestjs/swagger';
@@ -26,53 +31,45 @@ import {
 @Controller('generator')
 export class GeneratorController {
   public constructor(private generatorService: GeneratorService) {}
-  @Get('main')
-  @ApiQuery({
-    name: 'query',
-    type: String,
-    required: true,
-    description: 'User query, generation request.',
-  })
-  @ApiQuery({
-    name: 'email',
-    type: String,
-    required: true,
-    description: 'User email.',
+  @Post('main')
+  @ApiBody({
+    schema: {
+      properties: {
+        prompt: {
+          type: 'string',
+        },
+        email: {
+          type: 'string',
+        },
+        user_id: {
+          type: 'string',
+        },
+      },
+    },
   })
   @ApiOkResponse({
     description:
-      'Sucessfull response with message that request dispatched, in progress.',
+      'Successful response with message that request dispatched, images generation started and in progress.',
     type: MainResponse,
   })
   @ApiBadRequestResponse({
     type: BadRequestResponse,
   })
   public async main(
-    @Query('query') query: string,
-    @Query('email') email: string,
-    @Res() response: Response,
+    @Body() reqBody: GenerateReqInDto,
+    @Req() request: Request,
   ) {
-    if (!email) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        error: 'Email is required',
-      });
-    }
-    if (!query) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        error: 'Query is required',
-      });
-    }
+    const { prompt, email, userId } = reqBody;
     const dto: MainGeneratorDto = {
-      query: query,
+      query: prompt,
       user: {
-        userAgent: 'some agent',
+        userAgent: request.get('user-agent'),
         email: email,
+        id: userId,
       },
     };
     await this.generatorService.dispatchGenerationJob(dto);
-    return response.status(HttpStatus.OK).json({
-      result: 'Generation job dispatched',
-    });
+    return { result: true };
   }
 
   @ApiOkResponse({
@@ -85,7 +82,7 @@ export class GeneratorController {
     required: false,
     description: 'By default amount set to 6',
   })
-  @Get('random-pictures')
+  @Get('random-images')
   public async randomPics(
     @Query('amount') amount = 6,
   ): Promise<PicturesResponse> {
@@ -103,18 +100,18 @@ export class GeneratorController {
     type: BadRequestResponse,
   })
   @Post('upscale-image')
-  public async upscaleImage(
-    @Body() body: UpscaleImageBody,
-    @Res() response: Response,
-  ): Promise<any> {
-    if (!body.url) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        error: 'Query is required',
-      });
-    }
+  @HttpCode(HttpStatus.OK)
+  public async upscaleImage(@Body() body: UpscaleImageBody): Promise<any> {
     const result = await this.generatorService.upscaleImage(body.url);
-    return response.status(HttpStatus.OK).json({
+    return {
       url: result,
-    });
+    };
+  }
+
+  @Get('images/:userId')
+  public async getImageByUserId(@Param() query: GetImagesByUserIdReqInDto) {
+    const { userId } = query;
+
+    return {};
   }
 }

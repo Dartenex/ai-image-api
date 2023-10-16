@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class PicturesResponse {
   @ApiProperty({
@@ -10,9 +11,9 @@ export class PicturesResponse {
 
 export class MainResponse {
   @ApiProperty({
-    type: String,
+    type: Boolean,
   })
-  result: string;
+  result: boolean;
 }
 
 export class BadRequestResponse {
@@ -27,6 +28,8 @@ export class UpscaleImageBody {
     type: String,
     required: true,
   })
+  @IsString()
+  @IsNotEmpty()
   url: string;
 }
 
