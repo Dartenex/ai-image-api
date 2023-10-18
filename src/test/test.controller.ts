@@ -8,6 +8,7 @@ export class TestController {
 
   @Get('api')
   public async testApi() {
+    console.log('test api');
     await this.testJobQueue.add({
       data: 'test data 123',
     });

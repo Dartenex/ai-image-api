@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import { ImageToSave, MainGeneratorDto, ResultImage } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
@@ -15,6 +15,8 @@ import { QueueKeys } from '@generator/queue.keys';
 
 @Injectable()
 export class GeneratorService {
+  private readonly logger = new Logger(GeneratorService.name);
+
   public constructor(
     private textGenerator: OpenAiService,
     private midjourneyAi: MidjourneyService,
@@ -28,24 +30,23 @@ export class GeneratorService {
 
   public async processQueueItem(job: Job<MainGeneratorDto>) {
     const requestId = generateHash(job.data);
-    const start = new Date();
-    console.log(
-      `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
-        job.data.user.email
-      }`,
+    const { user, query } = job.data;
+    this.logger.log(
+      `Generation started for request '${requestId}' and email ${user.email}`,
     );
-    await this.mailService.sendGreetingsMessage(
-      job.data.user.email,
-      job.data.query,
-    );
+    await this.mailService.sendGreetingsMessage(user.email, query);
+    this.logger.log(`Successfully greetings message to user ${user.email}`);
     const images: ResultImage[] = await this.generateMainImages(job.data);
     await this.saveImages(images, job.data, requestId);
+    this.logger.log(
+      `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
+    );
     await this.sendMessageToUser(job.data, requestId);
-    const end = new Date();
-    console.log(
-      `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
-        job.data.user.email
-      }`,
+    this.logger.log(
+      `Successfully final message to user - ${user.email} and request ${requestId}.`,
+    );
+    this.logger.log(
+      `Generation finished for request '${requestId}' and email ${user.email}`,
     );
   }
 

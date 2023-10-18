@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import Mailgun, { Interfaces } from 'mailgun.js';
+import Mailgun, { Interfaces, MailgunMessageData } from 'mailgun.js';
 import { ConfigService } from '@nestjs/config';
 import * as formData from 'form-data';
 
@@ -24,11 +24,11 @@ export class MailgunDriver {
   }
 
   public async sendMessage(data: SendMessageDto) {
-    const messageData = {
+    const messageData: MailgunMessageData = {
       from: 'GIO AI <support@gio.ai>',
       to: data.to.join(', '),
       subject: data.subject,
-      text: data.text,
+      html: data.text,
     };
     await this.client.messages.create(this.domain, messageData);
   }

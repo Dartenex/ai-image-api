@@ -1,6 +1,6 @@
 ###
 // @no-log
-GET http://localhost:4050/test/email
+GET http://localhost:4050/test/api
 Accept: application/json
 
 
@@ -12,11 +12,12 @@ Accept: application/json
 POST http://localhost:4050/generator/main
 Accept: application/json
 Content-Type: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 
 {
-  "prompt": "s",
-  "email": "s",
-  "userId": "s"
+  "prompt": "Family of farmers harvesting grapes",
+  "email": "dimavfox@gmail.com",
+  "userId": "some_user_id_here"
 }
 
 

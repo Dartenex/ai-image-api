@@ -1,4 +1,6 @@
-import { resolve, dirname } from 'path';
+import { resolve } from 'path';
 
-export const rootDir = resolve(dirname('.'));
+export const rootDir = resolve(process.cwd());
 export const storageDir = resolve(`${rootDir}/storage`);
+
+export const mailTemplatesDir = resolve(`${rootDir}/mail/templates`);
