@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
-import { MidjourneyModule } from '@midjourney/midjourney.module';
 import { OpenAiModule } from '@open-ai/open-ai.module';
 import { GeneratorController } from '@generator/generator.controller';
-import { LeonardoAiModule } from '../leonardo-ai/leonardo-ai.module';
 import { BullModule } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
 import { StorageModule } from '../storage/storage.module';
-import { MongodbModule } from '../mongodb/mongodb.module';
 import { TestService } from '@generator/test.service';
 import { QueueOptions } from 'bull';
+import { GeneratorDIKeys } from '@generator/contracts';
+import { ImageRepository } from '@generator/image.repository';
+import { DbModule } from '@db/db.module';
+import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -22,9 +23,7 @@ const queueOptions: QueueOptions = {
 
 @Module({
   imports: [
-    MidjourneyModule,
     OpenAiModule,
-    LeonardoAiModule,
     BullModule.registerQueueAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -49,9 +48,18 @@ const queueOptions: QueueOptions = {
     }),
     MailModule,
     StorageModule,
-    MongodbModule,
+    DbModule,
   ],
-  providers: [GeneratorService, TestService],
+  providers: [
+    MidjourneyService,
+    LeonardoAiService,
+    GeneratorService,
+    TestService,
+    {
+      provide: GeneratorDIKeys.ImageRepository,
+      useClass: ImageRepository,
+    },
+  ],
   controllers: [GeneratorController],
 })
 export class GeneratorModule {}

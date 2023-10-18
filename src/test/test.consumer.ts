@@ -6,6 +6,7 @@ import { Job } from 'bull';
 @Injectable()
 @Processor('test-job')
 export class TestConsumer {
+  // public constructor(private mailService: MailService) {}
   @Process()
   public async processTestJob(job: Job<any>) {
     await delayCallback(4000, () => {

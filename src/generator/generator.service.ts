@@ -1,54 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
-import { MidjourneyService } from '@midjourney/midjourney.service';
 import { ImageToSave, MainGeneratorDto, ResultImage } from '@generator/dto';
-import { LeonardoAiService } from '../leonardo-ai/leonardo-ai.service';
-import { InjectQueue, Process, Processor } from '@nestjs/bull';
+import { InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
-import { createHash } from 'crypto';
-import { MongodbService } from '../mongodb/mongodb.service';
-import { delayCallback, logTime } from '@utils';
-import { WithId } from 'mongodb';
+import { delayCallback, generateHash, logTime } from '@utils';
+import {
+  GeneratorDIKeys,
+  ImageRepositoryInterface,
+} from '@generator/contracts';
+import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
+import { QueueKeys } from '@generator/queue.keys';
 
 @Injectable()
-@Processor('generator')
 export class GeneratorService {
   public constructor(
     private textGenerator: OpenAiService,
     private midjourneyAi: MidjourneyService,
     private leonardoAi: LeonardoAiService,
-    @InjectQueue('generator') private generatorQueue: Queue,
+    @InjectQueue(QueueKeys.MAIN_QUEUE) private generatorQueue: Queue,
     private mailService: MailService,
     private storageService: StorageService,
-    private mongoDb: MongodbService,
+    @Inject(GeneratorDIKeys.ImageRepository)
+    private readonly imageRepository: ImageRepositoryInterface,
   ) {}
 
-  @Process()
-  public async queueProcessorCallbacks(job: Job<MainGeneratorDto>) {
-    try {
-      const requestId = this.getRequestId(job.data.user.email, job.data.query);
-      const start = new Date();
-      console.log(
-        `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
-          job.data.user.email
-        }`,
-      );
-      await this.sendGreetingMal(job.data);
-      const images: ResultImage[] = await this.generateMainImages(job.data);
-      await this.saveImages(images, job.data, requestId);
-      await this.sendMessageToUser(job.data, requestId);
-      const end = new Date();
-      console.log(
-        `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
-          job.data.user.email
-        }`,
-      );
-    } catch (e) {
-      console.log('ERROR DURING GENERATION JOB');
-      console.log(e);
-    }
+  public async processQueueItem(job: Job<MainGeneratorDto>) {
+    const requestId = generateHash(job.data);
+    const start = new Date();
+    console.log(
+      `[${start.toISOString()}]: Generation started for request ${requestId} and email ${
+        job.data.user.email
+      }`,
+    );
+    await this.mailService.sendGreetingsMessage(
+      job.data.user.email,
+      job.data.query,
+    );
+    const images: ResultImage[] = await this.generateMainImages(job.data);
+    await this.saveImages(images, job.data, requestId);
+    await this.sendMessageToUser(job.data, requestId);
+    const end = new Date();
+    console.log(
+      `[${end.toISOString()}]: Generation finished for request ${requestId} and email ${
+        job.data.user.email
+      }`,
+    );
   }
 
   private async saveImages(
@@ -62,14 +60,14 @@ export class GeneratorService {
       return {
         ...i,
         email: dto.user.email,
-        name: `${this.generateImgName(i.url)}.${extension}`,
+        name: `${generateHash(i.url)}.${extension}`,
         requestId: requestId,
       };
     });
     for (const image of resultImages) {
       await this.storageService.downloadAndSave(image.url, image.name);
     }
-    await this.saveInDb(resultImages);
+    await this.imageRepository.saveMultipleImages(resultImages);
   }
 
   public async dispatchGenerationJob(dto: MainGeneratorDto) {
@@ -108,7 +106,7 @@ export class GeneratorService {
   }
 
   public async getRandomPics(amount: number): Promise<string[]> {
-    const names = await this.mongoDb.randomImageDocs(amount);
+    const names = await this.imageRepository.getRandomPicsUrls(amount);
     return names.map((name: string) => this.getImgUrlByName(name));
   }
 
@@ -118,19 +116,11 @@ export class GeneratorService {
   }
 
   private async sendMessageToUser(dto: MainGeneratorDto, requestId: string) {
-    const requestImages = await this.mongoDb
-      .imagesCollection()
-      .find({ requestId: requestId })
-      .toArray();
-
-    const processedImages: ResultImage[] = requestImages.map(
-      (image: WithId<ImageToSave>) => ({
-        ...image,
-        url: this.getImgUrlByName(image.name),
-      }),
+    const requestImages = await this.imageRepository.getImagesByRequestId(
+      requestId,
     );
     await this.mailService.sendGenerationMail({
-      images: processedImages,
+      images: requestImages,
       email: dto.user.email,
     });
   }
@@ -139,27 +129,8 @@ export class GeneratorService {
     return `https://gio-ai-api-bucket.s3.amazonaws.com/images/${name}`;
   }
 
-  private async saveInDb(images: ImageToSave[]) {
-    await this.mongoDb.imagesCollection().insertMany(images);
-  }
-
-  private getRequestId(email: string, query: string): string {
-    const hash = createHash('sha256');
-    hash.update(`${new Date().getTime()} ${email} ${query}`);
-    return hash.digest('hex');
-  }
-
-  private generateImgName(url: string): string {
-    const hash = createHash('sha256');
-    return hash.update(url).digest('hex');
-  }
-
   private getExtension(link: string): string {
     const regExp = new RegExp(/\.(?<extension>(png|jpg|jpeg)$)/);
     return link.match(regExp).groups.extension;
-  }
-
-  private async sendGreetingMal(dto: MainGeneratorDto) {
-    await this.mailService.sendGreetingsMessage(dto.user.email, dto.query);
   }
 }

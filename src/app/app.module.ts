@@ -15,6 +15,6 @@ import { TestModule } from '../test/test.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
-    consumer.apply(ApiKeyMiddleware).forRoutes('/generator');
+    consumer.apply(ApiKeyMiddleware).forRoutes('generator/*');
   }
 }

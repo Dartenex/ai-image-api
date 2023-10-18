@@ -1,0 +1,30 @@
+version: "3.11"
+services:
+  ai_app:
+    command:
+      - npm
+      - run
+      - start:dev
+    depends_on:
+      - app_redis
+    image: node:18-alpine
+    deploy:
+      replicas: 2
+    ports:
+      - mode: ingress
+        target: 4050
+        published: 4050
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /home/dmitriy/gio-ai
+        target: /app
+    working_dir: /app
+
+  app_redis:
+    image: redis:latest
+    ports:
+      - mode: ingress
+        target: 6379
+        published: 6379
+        protocol: tcp

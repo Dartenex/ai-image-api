@@ -21,6 +21,7 @@
     "paths": {
       "@open-ai/*": ["./src/open-ai/*"],
       "@generator/*": ["./src/generator/*"],
+      "@db/*": ["./src/db/*"],
       "@midjourney/*": ["./src/midjourney/*"],
       "@utils": ["./src/utils"]
     }
