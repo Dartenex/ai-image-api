@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailgunDriver } from './mailgun';
 import { GenerationMailDto } from './dto';
-import { ResultImage } from '@generator/dto';
 import { delayCallback, mailTemplatesDir, randomMilliseconds } from '@utils';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { GeneratedImageDto } from '@generator/dto';
 
 @Injectable()
 export class MailService {
@@ -32,7 +32,7 @@ export class MailService {
 
   public async sendGenerationMail(data: GenerationMailDto) {
     let text = '';
-    data.images.forEach((i: ResultImage) => {
+    data.images.forEach((i: GeneratedImageDto) => {
       text += `${i.url}\n`;
     });
     await this.sendWithAttempts(async () => {

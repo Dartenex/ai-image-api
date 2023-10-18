@@ -17,7 +17,8 @@ export class GeneratorQueueProcessor {
     try {
       await this.generatorService.processQueueItem(job);
     } catch (e) {
-      this.logger.error(`JOB FOR USER ${user.email} FAILED.`, e);
+      this.logger.error(`JOB FOR USER ${user.email} FAILED.`);
+      this.logger.error(e);
     }
   }
 }

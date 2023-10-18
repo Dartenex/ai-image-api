@@ -1,7 +1,7 @@
-import { ImageToSave, ResultImage } from '@generator/dto';
+import { GeneratedImageDto, ImageToSave } from '@generator/dto';
 
 export interface ImageRepositoryInterface {
   getRandomPicsUrls(amount: number): Promise<string[]>;
   saveMultipleImages(images: ImageToSave[]): Promise<void>;
-  getImagesByRequestId(requestId: string): Promise<ResultImage[]>;
+  getImagesByRequestId(requestId: string): Promise<GeneratedImageDto[]>;
 }

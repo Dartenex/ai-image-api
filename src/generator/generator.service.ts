@@ -1,13 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
-import { ImageToSave, MainGeneratorDto, ResultImage } from '@generator/dto';
+import {
+  GeneratedImageDto,
+  ImageToSave,
+  MainGeneratorDto,
+} from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
-import { delayCallback, generateHash, logTime } from '@utils';
+import { delayCallback, generateHash } from '@utils';
 import {
   GeneratorDIKeys,
+  ImageGeneratorInterface,
   ImageRepositoryInterface,
 } from '@generator/contracts';
 import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
@@ -36,12 +41,14 @@ export class GeneratorService {
     );
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
-    const images: ResultImage[] = await this.generateMainImages(job.data);
+    const images: GeneratedImageDto[] = await this.generateMainImages(job.data);
+    this.logger.log('READY IMAGES');
+    this.logger.log(images);
     await this.saveImages(images, job.data, requestId);
     this.logger.log(
       `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
     );
-    await this.sendMessageToUser(job.data, requestId);
+    await this.sendFinalMailToUser(job.data, requestId);
     this.logger.log(
       `Successfully final message to user - ${user.email} and request ${requestId}.`,
     );
@@ -51,11 +58,11 @@ export class GeneratorService {
   }
 
   private async saveImages(
-    images: ResultImage[],
+    images: GeneratedImageDto[],
     dto: MainGeneratorDto,
     requestId: string,
   ) {
-    const resultImages: ImageToSave[] = images.map((i: ResultImage) => {
+    const resultImages: ImageToSave[] = images.map((i: GeneratedImageDto) => {
       const extension = this.getExtension(i.url);
 
       return {
@@ -73,37 +80,26 @@ export class GeneratorService {
 
   public async dispatchGenerationJob(dto: MainGeneratorDto) {
     await this.generatorQueue.add(dto);
-    console.log(
-      `${logTime()}Dispatched job for user '${dto.user.email}' with query '${
-        dto.query
-      }'`,
+    this.logger.log(
+      `Dispatched job for user '${dto.user.email}' with query '${dto.query}'`,
     );
   }
 
   public async generateMainImages(dto: MainGeneratorDto) {
-    const textPrompts = await this.textGenerator.generatePromptsForImages(
-      dto.query,
-    );
-    const midjourneyImages =
-      (await this.midjourneyAi.getImagesByQueries(textPrompts)) ?? [];
-    const leonardoResult = await this.leonardoAi.generateByQueries(textPrompts);
-    const leonardoUpscaledImages: ResultImage[] =
-      await this.leonardoAi.upscaleImages(leonardoResult);
-
-    const allImages: ResultImage[] = [...leonardoUpscaledImages];
-    midjourneyImages.forEach((images: any[]) => {
-      const imgsToProcess = images ?? [];
-      const imgs = imgsToProcess.map(
-        (i: string): ResultImage => ({
-          url: i,
-          isUpscaled: false,
-          source: 'midjourney',
-          createdAt: new Date().toISOString(),
-        }),
+    const generationServices: ImageGeneratorInterface[] = [
+      this.midjourneyAi,
+      this.leonardoAi,
+    ];
+    const textPrompts: string[] =
+      await this.textGenerator.generatePromptsForImages(dto.query);
+    const resultImages: GeneratedImageDto[] = [];
+    for (const generationService of generationServices) {
+      const generationImages = await generationService.generateImagesByQueries(
+        textPrompts,
       );
-      allImages.push(...imgs);
-    });
-    return allImages;
+      resultImages.push(...generationImages);
+    }
+    return resultImages;
   }
 
   public async getRandomPics(amount: number): Promise<string[]> {
@@ -116,7 +112,7 @@ export class GeneratorService {
     return url;
   }
 
-  private async sendMessageToUser(dto: MainGeneratorDto, requestId: string) {
+  private async sendFinalMailToUser(dto: MainGeneratorDto, requestId: string) {
     const requestImages = await this.imageRepository.getImagesByRequestId(
       requestId,
     );

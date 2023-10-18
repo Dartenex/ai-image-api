@@ -1,5 +1,6 @@
 import { GeneratedImageDto } from '@generator/dto';
 
 export interface ImageGeneratorInterface {
-  generateImageByQuery(query: string): Promise<GeneratedImageDto>;
+  generateImagesByQuery(query: string): Promise<GeneratedImageDto[]>;
+  generateImagesByQueries(queries: string[]): Promise<GeneratedImageDto[]>;
 }

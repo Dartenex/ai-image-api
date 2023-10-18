@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Configuration,
-  CreateChatCompletionResponse,
-  CreateChatCompletionResponseChoicesInner,
-  OpenAIApi,
-} from 'openai';
-import { threeTextsGenerationPrompt } from './prompts';
+import { Configuration, OpenAIApi } from 'openai';
+import { promptsDelimiter, threeTextsGenerationPrompt } from './prompts';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -34,7 +29,7 @@ export class OpenAiService {
     });
     return results.data.choices[0].message.content
       .split('\n\n')
-      .map((s) => s.replace(/\$\$\$/, ''))
+      .map((s) => s.replace(promptsDelimiter, ''))
       .filter((_) => _);
   }
 }

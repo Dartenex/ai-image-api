@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ImageRepositoryInterface } from '@generator/contracts';
 import { MongodbService } from '@db/drivers';
 import { Collection, WithId } from 'mongodb';
-import { ImageToSave, ResultImage } from '@generator/dto';
+import { GeneratedImageDto, ImageToSave } from '@generator/dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ImageRepository implements ImageRepositoryInterface {
     return result.map((i: ImageToSave) => i.name);
   }
 
-  async getImagesByRequestId(requestId: string): Promise<ResultImage[]> {
+  async getImagesByRequestId(requestId: string): Promise<GeneratedImageDto[]> {
     const requestImages = await this.imagesCollection()
       .find({ requestId: requestId })
       .toArray();

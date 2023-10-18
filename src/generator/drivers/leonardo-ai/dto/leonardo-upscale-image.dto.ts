@@ -1,4 +1,4 @@
-export interface UpscaleImage {
+export interface LeonardoUpscaledImage {
   url: string;
   status: string;
   id: string;

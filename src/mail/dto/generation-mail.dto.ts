@@ -1,6 +1,6 @@
-import { ResultImage } from '@generator/dto';
+import { GeneratedImageDto } from '@generator/dto';
 
 export interface GenerationMailDto {
   email: string;
-  images: ResultImage[];
+  images: GeneratedImageDto[];
 }
