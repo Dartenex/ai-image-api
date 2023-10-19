@@ -33,7 +33,8 @@ export class MailService {
   public async sendGenerationMail(data: GenerationMailDto) {
     let text = '';
     data.images.forEach((i: GeneratedImageDto) => {
-      text += `${i.url}\n`;
+      const url = this.getImgUrlByName(i.url);
+      text += `${url}\n`;
     });
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
@@ -42,6 +43,10 @@ export class MailService {
         to: [data.email],
       });
     });
+  }
+
+  private getImgUrlByName(name: string): string {
+    return `https://gio-ai-api-bucket.s3.amazonaws.com/images/${name}`;
   }
 
   public async sendGreetingsMessage(toEmail: string, prompt: string) {

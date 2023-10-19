@@ -10,6 +10,7 @@ export class ImageToSave extends GeneratedImageDto {
   name: string;
   email: string;
   requestId: string;
+  userId: string;
 }
 
 export * from './responses';

@@ -42,8 +42,6 @@ export class GeneratorService {
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
     const images: GeneratedImageDto[] = await this.generateMainImages(job.data);
-    this.logger.log('READY IMAGES');
-    this.logger.log(images);
     await this.saveImages(images, job.data, requestId);
     this.logger.log(
       `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
@@ -70,6 +68,7 @@ export class GeneratorService {
         email: dto.user.email,
         name: `${generateHash(i.url)}.${extension}`,
         requestId: requestId,
+        userId: dto.user.id,
       };
     });
     for (const image of resultImages) {
@@ -110,6 +109,10 @@ export class GeneratorService {
   public async upscaleImage(url: string): Promise<string> {
     await delayCallback(2345, () => 1);
     return url;
+  }
+
+  public async imagesListByUserId() {
+
   }
 
   private async sendFinalMailToUser(dto: MainGeneratorDto, requestId: string) {
