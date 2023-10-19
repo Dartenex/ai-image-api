@@ -51,8 +51,9 @@ export class GeneratorController {
         },
         redirectUrl: {
           type: 'string',
-          description: 'User will receive email with given redirect link to view his images.'
-        }
+          description:
+            'User will receive email with given redirect link to view his images.',
+        },
       },
     },
   })

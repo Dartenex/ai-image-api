@@ -8,10 +8,10 @@ import {
   PublicImage,
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
-import { Job, Queue } from 'bull';
+import { Queue } from 'bull';
 import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
-import { delayCallback, generateHash } from '@utils';
+import { delayCallback, generateHash, publicImgUrl } from '@utils';
 import {
   GeneratorDIKeys,
   ImageGeneratorInterface,
@@ -106,7 +106,7 @@ export class GeneratorService {
 
   public async getRandomPics(amount: number): Promise<string[]> {
     const names = await this.imageRepository.getRandomPicsUrls(amount);
-    return names.map((name: string) => this.getImgUrlByName(name));
+    return names.map((name: string) => publicImgUrl(name));
   }
 
   public async upscaleImage(url: string): Promise<string> {
@@ -132,10 +132,6 @@ export class GeneratorService {
       email: dto.user.email,
       redirectUrl: dto.redirectUrl,
     });
-  }
-
-  private getImgUrlByName(name: string): string {
-    return `https://gio-ai-api-bucket.s3.amazonaws.com/images/${name}`;
   }
 
   private getExtension(link: string): string {
