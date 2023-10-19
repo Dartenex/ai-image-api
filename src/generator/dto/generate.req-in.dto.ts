@@ -10,4 +10,7 @@ export class GenerateReqInDto {
   @IsNotEmpty()
   @IsString()
   userId: string;
+  @IsNotEmpty()
+  @IsString()
+  redirectUrl: string;
 }

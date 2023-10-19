@@ -15,7 +15,7 @@ export class GeneratorQueueProcessor {
   public async queueProcessorCallbacks(job: Job<MainGeneratorDto>) {
     const { user } = job.data;
     try {
-      await this.generatorService.processQueueItem(job);
+      await this.generatorService.processQueueItem(job.data);
     } catch (e) {
       this.logger.error(`JOB FOR USER ${user.email} FAILED.`);
       this.logger.error(e);

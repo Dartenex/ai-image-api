@@ -46,9 +46,13 @@ export class GeneratorController {
         email: {
           type: 'string',
         },
-        user_id: {
+        userId: {
           type: 'string',
         },
+        redirectUrl: {
+          type: 'string',
+          description: 'User will receive email with given redirect link to view his images.'
+        }
       },
     },
   })
@@ -64,7 +68,7 @@ export class GeneratorController {
     @Body() reqBody: GenerateReqInDto,
     @Req() request: Request,
   ): Promise<GeneratorMainResDto> {
-    const { prompt, email, userId } = reqBody;
+    const { prompt, email, userId, redirectUrl } = reqBody;
     const dto: MainGeneratorDto = {
       query: prompt,
       user: {
@@ -72,8 +76,8 @@ export class GeneratorController {
         email: email,
         id: userId,
       },
+      redirectUrl,
     };
-    console.log(request.get('user-agent'));
     await this.generatorService.dispatchGenerationJob(dto);
     return { result: true };
   }

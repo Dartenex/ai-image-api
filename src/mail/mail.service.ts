@@ -31,11 +31,11 @@ export class MailService {
   }
 
   public async sendGenerationMail(data: GenerationMailDto) {
-    let text = '';
-    data.images.forEach((i: GeneratedImageDto) => {
-      const url = this.getImgUrlByName(i.url);
-      text += `${url}\n`;
-    });
+    const text = `<p>View your images by link: <a href="${data.redirectUrl}">View images</a></p>`;
+    // data.images.forEach((i: GeneratedImageDto) => {
+    //   const url = this.getImgUrlByName(i.url);
+    //   text += `${url}\n`;
+    // });
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
         text: text,

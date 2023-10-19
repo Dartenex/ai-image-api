@@ -36,20 +36,20 @@ export class GeneratorService {
     private readonly imageRepository: ImageRepositoryInterface,
   ) {}
 
-  public async processQueueItem(job: Job<MainGeneratorDto>) {
-    const requestId = generateHash(job.data);
-    const { user, query } = job.data;
+  public async processQueueItem(data: MainGeneratorDto) {
+    const requestId = generateHash(data);
+    const { user, query } = data;
     this.logger.log(
       `Generation started for request '${requestId}' and email ${user.email}`,
     );
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
-    const images: GeneratedImageDto[] = await this.generateMainImages(job.data);
-    await this.saveImages(images, job.data, requestId);
+    const images: GeneratedImageDto[] = await this.generateMainImages(data);
+    await this.saveImages(images, data, requestId);
     this.logger.log(
       `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
     );
-    await this.sendFinalMailToUser(job.data, requestId);
+    await this.sendFinalMailToUser(data, requestId);
     this.logger.log(
       `Successfully final message to user - ${user.email} and request ${requestId}.`,
     );
@@ -130,6 +130,7 @@ export class GeneratorService {
     await this.mailService.sendGenerationMail({
       images: requestImages,
       email: dto.user.email,
+      redirectUrl: dto.redirectUrl,
     });
   }
 
