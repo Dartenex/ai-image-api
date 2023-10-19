@@ -1,9 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import {
-  GeneratedImageDto, ImagesByUserIdServiceOutDto,
+  GeneratedImageDto,
+  ImagesByUserIdServiceOutDto,
   ImageToSave,
-  MainGeneratorDto, PublicImage
+  MainGeneratorDto,
+  PublicImage,
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';

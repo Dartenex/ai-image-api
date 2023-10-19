@@ -4,10 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param, ParseIntPipe,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
-  Req
+  Req,
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
@@ -26,8 +27,9 @@ import { Request } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBody,
-  ApiOkResponse, ApiParam,
-  ApiQuery
+  ApiOkResponse,
+  ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ImagesByUserIdServiceInDto } from '@generator/dto';
 

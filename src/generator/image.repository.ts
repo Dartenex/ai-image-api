@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { ImageRepositoryInterface } from '@generator/contracts';
 import { MongodbService } from '@db/drivers';
 import { Collection, WithId } from 'mongodb';
-import { GeneratedImageDto, ImagesByUserIdRepoInDto, ImageToSave, PublicImage } from '@generator/dto';
+import {
+  GeneratedImageDto,
+  ImagesByUserIdRepoInDto,
+  ImageToSave,
+  PublicImage,
+} from '@generator/dto';
 import { ConfigService } from '@nestjs/config';
 import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
 import { offset, publicImgUrl } from '@utils';
