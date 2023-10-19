@@ -1,0 +1,6 @@
+node_modules
+/dist
+.react-email
+.vscode/*
+.idea
+.DS_STORE

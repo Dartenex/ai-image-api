@@ -43,6 +43,7 @@ export class GeneratorService {
       `Generation started for request '${requestId}' and email ${user.email}`,
     );
     await this.mailService.sendGreetingsMessage(user.email, query);
+    return;
     this.logger.log(`Successfully greetings message to user ${user.email}`);
     const images: GeneratedImageDto[] = await this.generateMainImages(data);
     await this.saveImages(images, data, requestId);

@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailgunDriver } from './mailgun';
 import { GenerationMailDto } from './dto';
-import { delayCallback, mailTemplatesDir, randomMilliseconds } from '@utils';
+import { delayCallback, mailTemplatesDir, publicImgUrl, randomMilliseconds } from '@utils';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { GeneratedImageDto } from '@generator/dto';
+import { render } from '@react-email/render';
+import { GenerationGreetingsMessage, GenerationSuccessMessage } from '../../email-builder/emails';
 
 @Injectable()
 export class MailService {
@@ -31,14 +32,16 @@ export class MailService {
   }
 
   public async sendGenerationMail(data: GenerationMailDto) {
-    const text = `<p>View your images by link: <a href="${data.redirectUrl}">View images</a></p>`;
-    // data.images.forEach((i: GeneratedImageDto) => {
-    //   const url = this.getImgUrlByName(i.url);
-    //   text += `${url}\n`;
-    // });
+    const template = render(
+      GenerationSuccessMessage({
+        redirectUrl: data.redirectUrl,
+        imageUrls: data.images.map((i) => publicImgUrl(i.url)).slice(0, 4),
+      }),
+    );
+
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
-        text: text,
+        text: template,
         subject: 'Images generation completed',
         to: [data.email],
       });
@@ -50,9 +53,13 @@ export class MailService {
   }
 
   public async sendGreetingsMessage(toEmail: string, prompt: string) {
+    const template = render(
+      GenerationGreetingsMessage({
+      prompt: prompt,
+    }));
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
-        text: `Hello! Your generation request for query - <b>'${prompt}'</b> is in progress! Estimated time to deliver 5-10 minutes. Thank you for your patience.`,
+        text: template,
         subject: 'GIO AI | Generation request in progress',
         to: [toEmail],
       });
