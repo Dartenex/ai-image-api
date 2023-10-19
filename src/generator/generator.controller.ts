@@ -20,8 +20,6 @@ import {
   MainGeneratorDto,
   MainResponse,
   PicturesResponse,
-  UpscaleImageBody,
-  UpscaleImageResponse,
 } from '@generator/dto';
 import { Request } from 'express';
 import {
@@ -100,22 +98,6 @@ export class GeneratorController {
     const images = await this.generatorService.getRandomPics(amount);
     return {
       pictures: images,
-    };
-  }
-
-  @ApiOkResponse({
-    description: 'Successful response with an array of picture objects.',
-    type: UpscaleImageResponse,
-  })
-  @ApiBadRequestResponse({
-    type: BadRequestResponse,
-  })
-  @Post('upscale-image')
-  @HttpCode(HttpStatus.OK)
-  public async upscaleImage(@Body() body: UpscaleImageBody): Promise<any> {
-    const result = await this.generatorService.upscaleImage(body.url);
-    return {
-      url: result,
     };
   }
 
