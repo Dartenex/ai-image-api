@@ -1,6 +1,6 @@
 version: "3.11"
 services:
-  ai_app:
+  api:
     command:
       - npm
       - run
