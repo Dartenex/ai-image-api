@@ -4,16 +4,18 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Query,
-  Req,
+  Req
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
   BadRequestResponse,
   GenerateReqInDto,
+  GeneratorMainResDto,
   GetImagesByUserIdReqInDto,
+  ImagesByUserIdServiceOutDto,
   MainGeneratorDto,
   MainResponse,
   PicturesResponse,
@@ -24,9 +26,10 @@ import { Request } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBody,
-  ApiOkResponse,
-  ApiQuery,
+  ApiOkResponse, ApiParam,
+  ApiQuery
 } from '@nestjs/swagger';
+import { ImagesByUserIdServiceInDto } from '@generator/dto';
 
 @Controller('generator')
 export class GeneratorController {
@@ -58,7 +61,7 @@ export class GeneratorController {
   public async main(
     @Body() reqBody: GenerateReqInDto,
     @Req() request: Request,
-  ) {
+  ): Promise<GeneratorMainResDto> {
     const { prompt, email, userId } = reqBody;
     const dto: MainGeneratorDto = {
       query: prompt,
@@ -68,6 +71,7 @@ export class GeneratorController {
         id: userId,
       },
     };
+    console.log(request.get('user-agent'));
     await this.generatorService.dispatchGenerationJob(dto);
     return { result: true };
   }
@@ -108,10 +112,47 @@ export class GeneratorController {
     };
   }
 
+  @ApiParam({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: 'User id key.',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+    description: 'By default amount set to 1',
+  })
+  @ApiQuery({
+    name: 'perPage',
+    type: Number,
+    required: false,
+    description: 'By default amount set to 20',
+  })
+  @ApiOkResponse({
+    description: 'Successful response with an array of images.',
+    type: ImagesByUserIdServiceOutDto,
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestResponse,
+  })
   @Get('images/:userId')
-  public async getImageByUserId(@Param() query: GetImagesByUserIdReqInDto) {
+  @HttpCode(HttpStatus.OK)
+  public async getImageByUserId(
+    @Param() query: GetImagesByUserIdReqInDto,
+    @Query('page') page: number,
+    @Query('perPage', ParseIntPipe) perPage: number,
+  ): Promise<ImagesByUserIdServiceOutDto> {
     const { userId } = query;
+    const dto: ImagesByUserIdServiceInDto = {
+      userId: userId,
+      page: page ?? 1,
+      perPage: perPage ?? 20,
+    };
+    const result: ImagesByUserIdServiceOutDto =
+      await this.generatorService.imagesListByUserId(dto);
 
-    return {};
+    return result;
   }
 }

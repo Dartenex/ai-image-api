@@ -1,5 +1,12 @@
 ###
 // @no-log
+GET http://localhost:4050/generator/images/some_user_id_here?perPage=1&page=1
+Accept: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
+
+
+###
+// @no-log
 GET http://localhost:4050/test/api
 Accept: application/json
 

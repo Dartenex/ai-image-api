@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import {
-  GeneratedImageDto,
+  GeneratedImageDto, ImagesByUserIdServiceOutDto,
   ImageToSave,
-  MainGeneratorDto,
+  MainGeneratorDto, PublicImage
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
@@ -17,6 +17,7 @@ import {
 } from '@generator/contracts';
 import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { QueueKeys } from '@generator/queue.keys';
+import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
 
 @Injectable()
 export class GeneratorService {
@@ -111,8 +112,13 @@ export class GeneratorService {
     return url;
   }
 
-  public async imagesListByUserId() {
+  public async imagesListByUserId(
+    dto: ImagesByUserIdServiceInDto,
+  ): Promise<ImagesByUserIdServiceOutDto> {
+    const resultItems: PublicImage[] =
+      await this.imageRepository.imagesByUserId(dto);
 
+    return { images: resultItems };
   }
 
   private async sendFinalMailToUser(dto: MainGeneratorDto, requestId: string) {
