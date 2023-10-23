@@ -4,6 +4,7 @@ import { Queue } from 'bull';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { render } from '@react-email/components';
 import { GenerationSuccessMessage } from '../../email-builder/emails';
+import puppeteer from 'puppeteer';
 
 @Controller('test')
 export class TestController {
@@ -13,6 +14,12 @@ export class TestController {
   @Get('/health')
   @HttpCode(HttpStatus.OK)
   public async health() {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox'],
+    });
+    const page = await browser.newPage();
+    await browser.close();
     return {
       success: true,
     };
