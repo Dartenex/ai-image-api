@@ -30,6 +30,7 @@ export class StorageService {
   public async downloadAndSave(link: string, name: string) {
     const browser = await puppeteer.launch({
       headless: 'new',
+      args: ['--no-sandbox'],
     });
     const page = await browser.newPage();
     const view = await page.goto(link);
