@@ -1,0 +1,6 @@
+node_modules
+dist
+
+docker-swarm.prod.yaml
+docker-swarm.local.yaml
+docker-compose.redis.yaml
