@@ -22,7 +22,10 @@ interface GenerationSuccessMessageProps {
   redirectUrl: string;
 }
 
-const GenerationSuccessMessage = ({ redirectUrl, imageUrls }: GenerationSuccessMessageProps) => {
+const GenerationSuccessMessage = ({
+  redirectUrl,
+  imageUrls,
+}: GenerationSuccessMessageProps) => {
   return (
     <Html>
       <Head />
@@ -34,14 +37,22 @@ const GenerationSuccessMessage = ({ redirectUrl, imageUrls }: GenerationSuccessM
               SelfCouture.co
             </Heading>
             <Text className="text-blackinviteLink text-[18px] leading-[24px] text-center">
-              Thank you for your patience! All images are generated successfully!
+              Thank you for your patience! All images are generated
+              successfully!
             </Text>
             <Section>
               <Row>
                 {imageUrls.map((url: string, idx: number) => {
-                  return <Column key={idx} align={'center'}>
-                    <Img className="rounded-full" src={url} width="64" height="64" />
-                  </Column>;
+                  return (
+                    <Column key={idx} align={'center'}>
+                      <Img
+                        className="rounded-full"
+                        src={url}
+                        width="64"
+                        height="64"
+                      />
+                    </Column>
+                  );
                 })}
               </Row>
             </Section>
@@ -62,8 +73,7 @@ const GenerationSuccessMessage = ({ redirectUrl, imageUrls }: GenerationSuccessM
               </Link>
             </Text>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
-            <Text className="text-[#666666] text-[12px] leading-[24px]">
-            </Text>
+            <Text className="text-[#666666] text-[12px] leading-[24px]"></Text>
           </Container>
         </Body>
       </Tailwind>

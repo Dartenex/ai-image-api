@@ -14,7 +14,9 @@ interface GenerationGreetingsMessageProps {
   prompt: string;
 }
 
-const GenerationGreetingsMessage = ({ prompt }: GenerationGreetingsMessageProps) => {
+const GenerationGreetingsMessage = ({
+  prompt,
+}: GenerationGreetingsMessageProps) => {
   return (
     <Html>
       <Head />
@@ -26,10 +28,16 @@ const GenerationGreetingsMessage = ({ prompt }: GenerationGreetingsMessageProps)
               SelfCouture.co
             </Heading>
             <Text className="text-blackinviteLink">
-              <p className='text-center mb-[32px] text-[18px] leading-[24px]'>Welcome to Selfcoutur.co!</p>
-              <p className='text-[18px] leading-[24px]'>Your generation request for query - <b>{prompt}</b> is in progress!
-              Estimated time to deliver 5-10 minutes.</p>
-              <p className="text-center font-bold text-[18px] mt-[32px]">Thank you for your patience!</p>
+              <p className="text-center mb-[32px] text-[18px] leading-[24px]">
+                Welcome to Selfcouture.co!
+              </p>
+              <p className="text-[18px] leading-[24px]">
+                Your generation request for query - <b>{prompt}</b> is in
+                progress! progress! Estimated time to deliver 5-10 minutes.
+              </p>
+              <p className="text-center font-bold text-[18px] mt-[32px]">
+                Thank you for your patience!
+              </p>
             </Text>
           </Container>
         </Body>

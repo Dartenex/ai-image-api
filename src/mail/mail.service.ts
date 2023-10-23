@@ -1,11 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailgunDriver } from './mailgun';
 import { GenerationMailDto } from './dto';
-import { delayCallback, mailTemplatesDir, publicImgUrl, randomMilliseconds } from '@utils';
+import {
+  delayCallback,
+  mailTemplatesDir,
+  publicImgUrl,
+  randomMilliseconds,
+} from '@utils';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { render } from '@react-email/render';
-import { GenerationGreetingsMessage, GenerationSuccessMessage } from '../../email-builder/emails';
+import {
+  GenerationGreetingsMessage,
+  GenerationSuccessMessage,
+} from '../../email-builder/emails';
 
 @Injectable()
 export class MailService {
@@ -55,8 +63,9 @@ export class MailService {
   public async sendGreetingsMessage(toEmail: string, prompt: string) {
     const template = render(
       GenerationGreetingsMessage({
-      prompt: prompt,
-    }));
+        prompt: prompt,
+      }),
+    );
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
         text: template,
