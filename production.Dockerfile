@@ -9,8 +9,6 @@ RUN npm i
 COPY . .
 RUN npm run build
 
-CMD ["npm", "run", "start:dev"]
-
 FROM node:18-alpine as prod_stage
 
 WORKDIR /app
