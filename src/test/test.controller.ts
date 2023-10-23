@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
@@ -8,6 +8,15 @@ import { GenerationSuccessMessage } from '../../email-builder/emails';
 @Controller('test')
 export class TestController {
   public constructor(@InjectQueue('test-job') private testJobQueue: Queue) {}
+
+  @ApiExcludeEndpoint()
+  @Get('/health')
+  @HttpCode(HttpStatus.OK)
+  public async health() {
+    return {
+      success: true,
+    };
+  }
 
   @ApiExcludeEndpoint()
   @Get('api')
