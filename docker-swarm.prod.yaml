@@ -11,8 +11,8 @@ services:
         condition: any
     ports:
       - mode: ingress
-        target: 4050
-        published: 4050
+        target: 3000
+        published: 3000
         protocol: tcp
     working_dir: /app
 
