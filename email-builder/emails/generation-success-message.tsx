@@ -40,22 +40,6 @@ const GenerationSuccessMessage = ({
               Thank you for your patience! All images are generated
               successfully!
             </Text>
-            <Section>
-              <Row>
-                {imageUrls.map((url: string, idx: number) => {
-                  return (
-                    <Column key={idx} align={'center'}>
-                      <Img
-                        className="rounded-full"
-                        src={url}
-                        width="64"
-                        height="64"
-                      />
-                    </Column>
-                  );
-                })}
-              </Row>
-            </Section>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
                 pX={20}
