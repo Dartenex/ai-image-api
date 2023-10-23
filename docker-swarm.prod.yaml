@@ -2,10 +2,6 @@ version: "3.4"
 
 services:
   api:
-    command:
-      - npm
-      - run
-      - start:dev
     depends_on:
       - app_redis
     image: gio_ai_api:latest
