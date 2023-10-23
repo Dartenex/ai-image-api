@@ -10,8 +10,6 @@ COPY . .
 
 RUN cd /app/email-builder && npm i
 
-RUN cd /app
-
 RUN npm run build
 
 RUN cd /app/dist && ls -la
@@ -21,17 +19,15 @@ FROM node:18-alpine as prod_stage
 
 WORKDIR /app
 
+RUN apk update apk add chromium-browser
+
 COPY package-lock.json .
 COPY package.json .
 RUN npm ci --omit=dev
 
 COPY --from=build_stage /app/dist /app/dist
 
-RUN ls -la
-RUN cd /app/dist && ls -la
-
 COPY .env .
-RUN cat /app/.env
 
 EXPOSE 3000
 
