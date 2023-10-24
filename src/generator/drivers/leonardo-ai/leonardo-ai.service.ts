@@ -67,7 +67,9 @@ export class LeonardoAiService implements ImageGeneratorInterface {
       );
       resultImages.push(...queryResult);
     }
-    this.logger.log(`Finished generating all images with amount of ${resultImages.length}`);
+    this.logger.log(
+      `Finished generating all images with amount of ${resultImages.length}`,
+    );
     return resultImages;
   }
 

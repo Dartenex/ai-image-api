@@ -95,9 +95,8 @@ export class GeneratorService {
       await this.textGenerator.generatePromptsForImages(dto.query);
     const resultImages: GeneratedImageDto[] = [];
     for (const generationService of generationServices) {
-      const generationImages: GeneratedImageDto[] = await generationService.generateImagesByQueries(
-        textPrompts,
-      );
+      const generationImages: GeneratedImageDto[] =
+        await generationService.generateImagesByQueries(textPrompts);
       resultImages.push(...generationImages);
     }
     return resultImages;
