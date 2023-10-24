@@ -26,6 +26,7 @@ export class MidjourneyService implements ImageGeneratorInterface {
     let attempts = 3;
     let success = false;
     let response: MessageAndProgress;
+    let imageUrls: string[] = [];
     this.logger.log(`Started generating images with query '${query}'`);
     do {
       try {
@@ -40,8 +41,14 @@ export class MidjourneyService implements ImageGeneratorInterface {
         await delayCallback(10000, async () => {
           response = await this.client.getMessageAndProgress(messageId);
         });
-        if (response.progress === 100) {
-          return this.processResponse(response);
+        if (response.progress === 100 && response?.response) {
+          return this.processResponse(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            (response?.response?.imageUrls as string[]) || [],
+            response.response.originatingMessageId,
+            response.response.responseAt,
+          );
         }
         do {
           await delayCallback(10000, async () => {
@@ -51,29 +58,39 @@ export class MidjourneyService implements ImageGeneratorInterface {
         success = true;
         this.logger.log(`Finished generating images with query '${query}'`);
       } catch (e) {
-        this.logger.log(`Failed generating images with query '${query}'`);
+        this.logger.error(`Failed generating images with query '${query}'`);
         this.logger.error(e);
         success = false;
         attempts -= 1;
       }
     } while (attempts !== 0 && !success);
 
-    return this.processResponse(response);
+    return this.processResponse(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      (response?.response?.imageUrls as string[]) || [],
+      response.response.originatingMessageId,
+      response.response.responseAt,
+    );
   }
 
-  private processResponse(response: MessageAndProgress): GeneratedImageDto[] {
+  private processResponse(
+    imgUrls: string[],
+    messageId: string,
+    createdAt: string,
+  ): GeneratedImageDto[] {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const items: string[] = (response.response?.imageUrls as string[]) ?? [];
+    const items: string[] = imgUrls;
     if (!items.length) {
       return [];
     }
     return items.map((url: string) => ({
-      id: generateHash(`${response.response.originatingMessageId}${url}`),
+      id: generateHash(`${messageId}${url}`),
       isUpscaled: true,
       source: 'midjourney',
       url: url,
-      createdAt: response.response.responseAt,
+      createdAt: createdAt,
     }));
   }
 
