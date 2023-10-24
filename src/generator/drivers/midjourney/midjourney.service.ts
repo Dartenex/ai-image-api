@@ -23,9 +23,10 @@ export class MidjourneyService implements ImageGeneratorInterface {
   public async generateImagesByQuery(
     query: string,
   ): Promise<GeneratedImageDto[]> {
-    let attempts = 2;
+    let attempts = 3;
     let success = false;
     let response: MessageAndProgress;
+    this.logger.log(`Started generating images with query '${query}'`);
     do {
       try {
         const msgIdResponse: Message = await delayCallback(1000, async () => {
@@ -48,7 +49,10 @@ export class MidjourneyService implements ImageGeneratorInterface {
           });
         } while (response.progress < 100);
         success = true;
+        this.logger.log(`Finished generating images with query '${query}'`);
       } catch (e) {
+        this.logger.log(`Failed generating images with query '${query}'`);
+        this.logger.error(e);
         success = false;
         attempts -= 1;
       }

@@ -4,4 +4,5 @@ export interface MainGeneratorDto {
   query: string;
   user: GenerateUserDto;
   redirectUrl: string;
+  requestId: string;
 }

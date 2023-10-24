@@ -23,7 +23,7 @@ import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.ser
 
 @Injectable()
 export class GeneratorService {
-  private readonly logger = new Logger(GeneratorService.name);
+  private readonly logger: Logger = new Logger(GeneratorService.name);
 
   public constructor(
     private textGenerator: OpenAiService,
@@ -36,11 +36,10 @@ export class GeneratorService {
     private readonly imageRepository: ImageRepositoryInterface,
   ) {}
 
-  public async processQueueItem(data: MainGeneratorDto) {
-    const requestId = generateHash(data);
-    const { user, query } = data;
+  public async processQueueItem(data: MainGeneratorDto): Promise<void> {
+    const { user, query, requestId } = data;
     this.logger.log(
-      `Generation started for request '${requestId}' and email ${user.email}`,
+      `Generation started for request '${requestId}', email ${user.email} and query '${query}'`,
     );
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
@@ -54,7 +53,7 @@ export class GeneratorService {
       `Successfully final message to user - ${user.email} and request ${requestId}.`,
     );
     this.logger.log(
-      `Generation finished for request '${requestId}' and email ${user.email}`,
+      `Generation finished for request '${requestId}', email ${user.email} and query '${query}'`,
     );
   }
 
@@ -96,7 +95,7 @@ export class GeneratorService {
       await this.textGenerator.generatePromptsForImages(dto.query);
     const resultImages: GeneratedImageDto[] = [];
     for (const generationService of generationServices) {
-      const generationImages = await generationService.generateImagesByQueries(
+      const generationImages: GeneratedImageDto[] = await generationService.generateImagesByQueries(
         textPrompts,
       );
       resultImages.push(...generationImages);

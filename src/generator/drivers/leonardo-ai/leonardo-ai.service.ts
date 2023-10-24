@@ -17,7 +17,7 @@ import { FetchResponse } from 'api/dist/core';
 export class LeonardoAiService implements ImageGeneratorInterface {
   private sdk: any;
   private readonly modelId: string;
-  private readonly logger = new Logger(LeonardoAiService.name);
+  private readonly logger: Logger = new Logger(LeonardoAiService.name);
 
   public constructor(private config: ConfigService) {
     this.modelId = this.config.get<string>('LEONARDO_AI_MODEL_ID');
@@ -32,14 +32,29 @@ export class LeonardoAiService implements ImageGeneratorInterface {
   public async generateImagesByQuery(
     query: string,
   ): Promise<GeneratedImageDto[]> {
-    const response: FetchResponse<any, CreateGenerationResponse200> =
-      await this.sdk.createGeneration({
-        prompt: query,
-        modelId: this.modelId,
-      });
-    const genId: string = response.data.sdGenerationJob.generationId;
-    const resultImages: LeonardoImage[] = await this.getResult(genId);
-    return this.processLeonardoImages(resultImages);
+    let success = true;
+    let attempts = 3;
+    let images: LeonardoImage[] = [];
+    do {
+      try {
+        this.logger.log(`Started generating images - attempt = ${attempts}`);
+        const response: FetchResponse<any, CreateGenerationResponse200> =
+          await this.sdk.createGeneration({
+            prompt: query,
+            modelId: this.modelId,
+          });
+        const genId: string = response.data.sdGenerationJob.generationId;
+        images = await this.getResult(genId);
+        this.logger.log(`Finished generating images - attempt = ${attempts}`);
+      } catch (e) {
+        this.logger.log(`Failed generating images - attempt = ${attempts}`);
+        this.logger.error(e?.data, e);
+        success = false;
+        attempts -= 1;
+      }
+    } while (!success && attempts !== 0);
+
+    return this.processLeonardoImages(images);
   }
 
   public async generateImagesByQueries(
@@ -52,33 +67,22 @@ export class LeonardoAiService implements ImageGeneratorInterface {
       );
       resultImages.push(...queryResult);
     }
-    return await this.upscaleImages(resultImages);
+    this.logger.log(`Finished generating all images with amount of ${resultImages.length}`);
+    return resultImages;
   }
 
   public async getResult(generationId: string): Promise<LeonardoImage[]> {
-    let success = true;
-    let attempts = 3;
     let result: FetchResponse<any, GetGenerationByIdResponse200> =
       await this.sdk.getGenerationById({
         id: generationId,
       });
     do {
-      try {
-        result = await delayCallback(10000, async () => {
-          return await this.sdk.getGenerationById({
-            id: generationId,
-          });
+      result = await delayCallback(10000, async () => {
+        return await this.sdk.getGenerationById({
+          id: generationId,
         });
-        success = true;
-      } catch (e) {
-        success = false;
-        attempts -= 1;
-      }
-    } while (
-      result.data.generations_by_pk.status !== 'COMPLETE' &&
-      attempts !== 0 &&
-      !success
-    );
+      });
+    } while (result.data.generations_by_pk.status !== 'COMPLETE');
     return result.data.generations_by_pk.generated_images as LeonardoImage[];
   }
 

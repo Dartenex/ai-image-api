@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class GenerateReqInDto {
   @IsNotEmpty()
@@ -6,6 +6,9 @@ export class GenerateReqInDto {
   prompt: string;
   @IsNotEmpty()
   @IsString()
+  @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+    message: 'Invalid email!',
+  })
   email: string;
   @IsNotEmpty()
   @IsString()

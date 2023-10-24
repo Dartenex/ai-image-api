@@ -30,6 +30,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { ImagesByUserIdServiceInDto } from '@generator/dto';
+import { generateHash } from '@utils';
 
 @Controller('generator')
 export class GeneratorController {
@@ -68,6 +69,7 @@ export class GeneratorController {
     @Req() request: Request,
   ): Promise<GeneratorMainResDto> {
     const { prompt, email, userId, redirectUrl } = reqBody;
+    const requestId: string = generateHash(reqBody);
     const dto: MainGeneratorDto = {
       query: prompt,
       user: {
@@ -75,10 +77,11 @@ export class GeneratorController {
         email: email,
         id: userId,
       },
+      requestId: requestId,
       redirectUrl,
     };
     await this.generatorService.dispatchGenerationJob(dto);
-    return { result: true };
+    return { result: true, requestId: requestId };
   }
 
   @ApiOkResponse({
