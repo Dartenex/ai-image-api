@@ -1,14 +1,14 @@
 ###
 // @no-log
-#POST https://api.selfcouture.co/generator/main
-POST http://localhost:3000/generator/main
+#POST http://localhost:3000/generator/main
+POST https://api.selfcouture.co/generator/main
 Accept: application/json
 Content-Type: application/json
 APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 
 {
-  "prompt": "New Year's Eve in New York City with warm ambient lighting illuminating the streets, detailed depiction of festive decorations, and lively crowds celebrating. Type of Image: Photograph, Environment: Outdoor, Camera: Front view, Shot: Wide angle, Render: 4K resolution, (((vibrant colors))), Lighting: Warm ambient light with golden streetlights, Lens: 35mm.",
-  "email": "test@email.com",
+  "prompt": "Farm with animals and grape",
+  "email": "dimauuvin@gmail.com",
   "userId": "some_user_id_here",
   "redirectUrl": "https://api.selfcouture.co/api/docs"
 }

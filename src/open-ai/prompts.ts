@@ -28,9 +28,8 @@ Please pay attention:
 - Separate the different prompts with ${promptsDelimiter}.
 - Each prompts must not have any new line characters.
 
-Important points to note:
-If you are not able to create prompts for some query, then create random prompt to similar one.
-I will provide you with a keyword and you will generate three different types of prompts with lots of details as given in the prompt structure
-
-Execute given instruction for query 'Family of farmers harvesting grapes'
+Important points to note, you need to use them 100%:
+- Each prompt must have max length of 100 characters
+- If you are not able to create prompts for some query, then create random prompt to similar one.
+- I will provide you with a keyword and you will generate three different types of prompts with lots of details as given in the prompt structure
 `;
