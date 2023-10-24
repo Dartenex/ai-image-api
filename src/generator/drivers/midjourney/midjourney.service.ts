@@ -23,27 +23,37 @@ export class MidjourneyService implements ImageGeneratorInterface {
   public async generateImagesByQuery(
     query: string,
   ): Promise<GeneratedImageDto[]> {
-    const msgIdResponse: Message = await delayCallback(1000, async () => {
-      return await this.client.imagine(query);
-    });
-    const messageId: string = msgIdResponse.messageId;
+    let attempts = 2;
+    let success = false;
     let response: MessageAndProgress;
-    await delayCallback(10000, async () => {
-      response = await this.client.getMessageAndProgress(messageId);
-    });
-
-    if (!messageId) {
-      this.logger.error('No message id was provided!');
-      return [];
-    }
-    if (response.progress === 100) {
-      return this.processResponse(response);
-    }
     do {
-      await delayCallback(10000, async () => {
-        response = await this.client.getMessageAndProgress(messageId);
-      });
-    } while (response.progress < 100);
+      try {
+        const msgIdResponse: Message = await delayCallback(1000, async () => {
+          return await this.client.imagine(query);
+        });
+        const messageId: string = msgIdResponse.messageId;
+        if (!messageId) {
+          this.logger.error('No message id was provided!');
+          return [];
+        }
+        await delayCallback(10000, async () => {
+          response = await this.client.getMessageAndProgress(messageId);
+        });
+        if (response.progress === 100) {
+          return this.processResponse(response);
+        }
+        do {
+          await delayCallback(10000, async () => {
+            response = await this.client.getMessageAndProgress(messageId);
+          });
+        } while (response.progress < 100);
+        success = true;
+      } catch (e) {
+        success = false;
+        attempts -= 1;
+      }
+    } while (attempts !== 0 && !success);
+
     return this.processResponse(response);
   }
 
