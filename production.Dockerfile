@@ -12,9 +12,6 @@ RUN cd /app/email-builder && npm i
 
 RUN npm run build
 
-RUN cd /app/dist
-RUN cd /app/dist/src
-
 FROM node:18-alpine as prod_stage
 
 WORKDIR /app
