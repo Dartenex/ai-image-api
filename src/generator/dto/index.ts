@@ -11,6 +11,11 @@ export { ImagesByUserIdRepoInDto } from './images-by-user-id.repo-in.dto';
 export { GeneratorMainResDto } from './generator-main.res.dto';
 export { PublicImage } from './public-image.dto';
 export { FinalGeneratedImageDto } from './final-generated-image.dto';
+export { GenerationDto } from './generation.dto';
+export { GenerationsByUserIdServiceInDto } from './generations-by-user-id.service-in.dto';
+export { GenerationsByUserIdRepoInDto } from './generations-by-user-id.repo-in.dto';
+export { GenerationsByUserIdServiceOutDto } from './generations-by-user-id.service-out.dto';
+export { GetGenerationsByUserIdReqInDto } from './get-generations-by-user-id.req-in.dto';
 
 export class ImageToSave extends GeneratedImageDto {
   name: string;

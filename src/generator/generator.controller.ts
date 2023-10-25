@@ -12,13 +12,13 @@ import {
 import { GeneratorService } from './generator.service';
 import {
   BadRequestResponse,
-  GenerateReqInDto,
-  GeneratorMainResDto,
+  GenerateReqInDto, GenerationsByUserIdServiceInDto, GenerationsByUserIdServiceOutDto,
+  GeneratorMainResDto, GetGenerationsByUserIdReqInDto,
   GetImagesByUserIdReqInDto,
   ImagesByUserIdServiceOutDto,
   MainGeneratorDto,
   MainResponse,
-  PicturesResponse,
+  PicturesResponse
 } from '@generator/dto';
 import { Request } from 'express';
 import {
@@ -142,5 +142,47 @@ export class GeneratorController {
       perPage: Number(perPage ?? 20),
     };
     return await this.generatorService.imagesListByUserId(dto);
+  }
+
+  @ApiParam({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: 'User id key.',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+    description: 'By default amount set to 1',
+  })
+  @ApiQuery({
+    name: 'perPage',
+    type: Number,
+    required: false,
+    description: 'By default amount set to 10',
+  })
+  @ApiOkResponse({
+    description:
+      'Successful response with an array of generations with data about prompts and progress.',
+    type: GenerationsByUserIdServiceOutDto,
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestResponse,
+  })
+  @Get('generations/:userId')
+  @HttpCode(HttpStatus.OK)
+  public async getUserGenerations(
+    @Param() query: GetGenerationsByUserIdReqInDto,
+    @Query('page') page?: number | null,
+    @Query('perPage') perPage?: number | null,
+  ): Promise<GenerationsByUserIdServiceOutDto> {
+    const { userId } = query;
+    const dto: GenerationsByUserIdServiceInDto = {
+      userId: userId,
+      page: Number(page ?? 1),
+      perPage: Number(perPage ?? 20),
+    };
+    return await this.generatorService.getGenerationsProgressByUser(dto);
   }
 }

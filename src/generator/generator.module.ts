@@ -13,6 +13,7 @@ import { ImageRepository } from '@generator/image.repository';
 import { DbModule } from '@db/db.module';
 import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { GeneratorQueueProcessor } from '@generator/generator.queue-processor';
+import { GenerationRepository } from '@generator/generation.repository';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -59,6 +60,10 @@ const queueOptions: QueueOptions = {
     {
       provide: GeneratorDIKeys.ImageRepository,
       useClass: ImageRepository,
+    },
+    {
+      provide: GeneratorDIKeys.GenerationRepository,
+      useClass: GenerationRepository,
     },
     GeneratorQueueProcessor,
   ],

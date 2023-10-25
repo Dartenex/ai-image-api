@@ -2,11 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import {
   FinalGeneratedImageDto,
-  GeneratedImageDto,
+  GeneratedImageDto, GenerationDto, GenerationsByUserIdServiceInDto, GenerationsByUserIdServiceOutDto,
   ImagesByUserIdServiceOutDto,
   ImageToSave,
   MainGeneratorDto,
-  PublicImage,
+  PublicImage
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -14,6 +14,7 @@ import { MailService } from '../mail/mail.service';
 import { StorageService } from '../storage/storage.service';
 import { delayCallback, generateHash, publicImgUrl } from '@utils';
 import {
+  GenerationRepositoryInterface,
   GeneratorDIKeys,
   ImageGeneratorInterface,
   ImageRepositoryInterface,
@@ -35,6 +36,7 @@ export class GeneratorService {
     private storageService: StorageService,
     @Inject(GeneratorDIKeys.ImageRepository)
     private readonly imageRepository: ImageRepositoryInterface,
+    private readonly generationRepository: GenerationRepositoryInterface,
   ) {}
 
   public async processQueueItem(data: MainGeneratorDto): Promise<void> {
@@ -127,6 +129,14 @@ export class GeneratorService {
       await this.imageRepository.imagesByUserId(dto);
 
     return { images: resultItems };
+  }
+
+  public async getGenerationsProgressByUser(
+    dto: GenerationsByUserIdServiceInDto,
+  ): Promise<GenerationsByUserIdServiceOutDto> {
+    const items: GenerationDto[] =
+      await this.generationRepository.generationsByUserId(dto);
+    return { generations: items };
   }
 
   private async sendFinalMailToUser(dto: MainGeneratorDto, requestId: string) {

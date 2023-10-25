@@ -21,12 +21,12 @@ export class ImageRepository implements ImageRepositoryInterface {
   async getRandomPicsUrls(amount: number): Promise<string[]> {
     const pipeline = [{ $sample: { size: amount } }];
 
-    const result = await this.imagesCollection().aggregate(pipeline).toArray();
+    const result = await this.collection().aggregate(pipeline).toArray();
     return result.map((i: ImageToSave) => i.name);
   }
 
   async getImagesByRequestId(requestId: string): Promise<GeneratedImageDto[]> {
-    const requestImages = await this.imagesCollection()
+    const requestImages = await this.collection()
       .find({ requestId: requestId })
       .toArray();
 
@@ -37,11 +37,11 @@ export class ImageRepository implements ImageRepositoryInterface {
   }
 
   async saveMultipleImages(images: ImageToSave[]): Promise<void> {
-    await this.imagesCollection().insertMany(images);
+    await this.collection().insertMany(images);
   }
 
   async imagesByUserId(dto: ImagesByUserIdRepoInDto): Promise<PublicImage[]> {
-    const requestImages: WithId<ImageToSave>[] = await this.imagesCollection()
+    const requestImages: WithId<ImageToSave>[] = await this.collection()
       .find({ userId: dto.userId })
       .limit(dto.perPage)
       .skip(offset(dto.page, dto.perPage))
@@ -62,7 +62,7 @@ export class ImageRepository implements ImageRepositoryInterface {
     );
   }
 
-  private imagesCollection(): Collection<ImageToSave> {
+  private collection(): Collection<ImageToSave> {
     return this.mongoDb
       .getConnection()
       .db(this.config.get<string>('MONGODB_DB_NAME'))
