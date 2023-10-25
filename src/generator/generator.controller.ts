@@ -80,7 +80,6 @@ export class GeneratorController {
       redirectUrl,
     };
     await this.generatorService.dispatchGenerationJob(dto);
-    await this.generatorService.processQueueItem(dto);
     return { result: true, requestId: requestId };
   }
 
