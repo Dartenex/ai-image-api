@@ -141,9 +141,6 @@ export class GeneratorController {
       page: Number(page ?? 1),
       perPage: Number(perPage ?? 20),
     };
-    const result: ImagesByUserIdServiceOutDto =
-      await this.generatorService.imagesListByUserId(dto);
-
-    return result;
+    return await this.generatorService.imagesListByUserId(dto);
   }
 }

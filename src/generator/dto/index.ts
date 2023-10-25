@@ -10,12 +10,14 @@ export { ImagesByUserIdServiceInDto } from './images-by-user-id.service-in.dto';
 export { ImagesByUserIdRepoInDto } from './images-by-user-id.repo-in.dto';
 export { GeneratorMainResDto } from './generator-main.res.dto';
 export { PublicImage } from './public-image.dto';
+export { FinalGeneratedImageDto } from './final-generated-image.dto';
 
 export class ImageToSave extends GeneratedImageDto {
   name: string;
   email: string;
   requestId: string;
   userId: string;
+  prompt: string;
 }
 
 export * from './responses';

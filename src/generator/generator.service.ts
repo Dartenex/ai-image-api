@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import {
+  FinalGeneratedImageDto,
   GeneratedImageDto,
   ImagesByUserIdServiceOutDto,
   ImageToSave,
@@ -44,7 +45,13 @@ export class GeneratorService {
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
     const images: GeneratedImageDto[] = await this.generateMainImages(data);
-    await this.saveImages(images, data, requestId);
+    const finalImages: FinalGeneratedImageDto[] = images.map(
+      (i: GeneratedImageDto) => ({
+        ...i,
+        prompt: query,
+      }),
+    );
+    await this.saveImages(finalImages, data, requestId);
     this.logger.log(
       `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
     );
@@ -58,7 +65,7 @@ export class GeneratorService {
   }
 
   private async saveImages(
-    images: GeneratedImageDto[],
+    images: FinalGeneratedImageDto[],
     dto: MainGeneratorDto,
     requestId: string,
   ) {
@@ -71,6 +78,7 @@ export class GeneratorService {
         name: `${generateHash(i.url)}.${extension}`,
         requestId: requestId,
         userId: dto.user.id,
+        prompt: dto.query,
       };
     });
     for (const image of resultImages) {

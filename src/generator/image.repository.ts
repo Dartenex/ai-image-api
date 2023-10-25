@@ -9,7 +9,6 @@ import {
   PublicImage,
 } from '@generator/dto';
 import { ConfigService } from '@nestjs/config';
-import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
 import { offset, publicImgUrl } from '@utils';
 
 @Injectable()
@@ -58,6 +57,7 @@ export class ImageRepository implements ImageRepositoryInterface {
         requestId: image.requestId,
         createdAt: image.createdAt,
         isUpscaled: image.isUpscaled,
+        prompt: image?.prompt ?? null,
       }),
     );
   }

@@ -29,4 +29,8 @@ export class PublicImage {
     type: Boolean,
   })
   isUpscaled: boolean;
+  @ApiProperty({
+    type: String,
+  })
+  prompt: string;
 }
