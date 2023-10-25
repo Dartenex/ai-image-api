@@ -32,7 +32,7 @@ export class StorageService {
     try {
       this.logger.log(`Download and save START by link=${link} and name=${name}`);
       const browser: Browser = await puppeteer.launch({
-        headless: false,
+        headless: 'new',
         args: ['--no-sandbox'],
       });
       const page: Page = await browser.newPage();
