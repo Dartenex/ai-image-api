@@ -30,7 +30,9 @@ export class StorageService {
 
   public async downloadAndSave(link: string, name: string) {
     try {
-      this.logger.log(`Download and save START by link=${link} and name=${name}`);
+      this.logger.log(
+        `Download and save START by link=${link} and name=${name}`,
+      );
       const browser: Browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox'],
@@ -42,7 +44,9 @@ export class StorageService {
       await browser.close();
       await this.uploadImage(name, this.getExtension(name));
       this.deleteFile(name);
-      this.logger.log(`Download and save FINISH by link=${link} and name=${name}`);
+      this.logger.log(
+        `Download and save FINISH by link=${link} and name=${name}`,
+      );
     } catch (e) {
       this.logger.error('Download and save image fail!');
       this.logger.error(e);

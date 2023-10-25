@@ -10,7 +10,7 @@ import {
   ImagesByUserIdServiceOutDto,
   ImageToSave,
   MainGeneratorDto,
-  PublicImage
+  PublicImage,
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';

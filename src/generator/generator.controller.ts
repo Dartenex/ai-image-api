@@ -12,13 +12,16 @@ import {
 import { GeneratorService } from './generator.service';
 import {
   BadRequestResponse,
-  GenerateReqInDto, GenerationsByUserIdServiceInDto, GenerationsByUserIdServiceOutDto,
-  GeneratorMainResDto, GetGenerationsByUserIdReqInDto,
+  GenerateReqInDto,
+  GenerationsByUserIdServiceInDto,
+  GenerationsByUserIdServiceOutDto,
+  GeneratorMainResDto,
+  GetGenerationsByUserIdReqInDto,
   GetImagesByUserIdReqInDto,
   ImagesByUserIdServiceOutDto,
   MainGeneratorDto,
   MainResponse,
-  PicturesResponse
+  PicturesResponse,
 } from '@generator/dto';
 import { Request } from 'express';
 import {
@@ -26,7 +29,8 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiParam,
-  ApiQuery, ApiTags
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ImagesByUserIdServiceInDto } from '@generator/dto';
 import { generateHash } from '@utils';
