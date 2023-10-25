@@ -1,5 +1,13 @@
 ###
 // @no-log
+#POST https://api.selfcouture.co/generator/main
+GET http://localhost:3000/generator/generations/some_user_id_here
+Accept: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
+
+
+###
+// @no-log
 #GET http://localhost:3000/test/image?link=https://cdn.midjourney.com/f0f2aae6-5196-49e5-bcb0-77222a936a54/0_0.png&name=test_name_1233.png
 GET https://api.selfcouture.co/test/image?link=https://cdn.midjourney.com/f0f2aae6-5196-49e5-bcb0-77222a936a54/0_0.png&name=test_name_12335.png
 Accept: application/json

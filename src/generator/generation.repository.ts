@@ -13,6 +13,13 @@ export class GenerationRepository implements GenerationRepositoryInterface {
     private readonly config: ConfigService,
   ) {}
 
+  public async getProgress(requestId: string): Promise<number> {
+    const generation: WithId<GenerationDto> = await this.collection().findOne({
+      id: requestId,
+    });
+    return generation.progressInPercents;
+  }
+
   public async create(data: GenerationDto): Promise<string> {
     const result: InsertOneResult<GenerationDto> =
       await this.collection().insertOne(data);
@@ -26,7 +33,7 @@ export class GenerationRepository implements GenerationRepositoryInterface {
   ): Promise<void> {
     await this.collection().updateOne(
       { id: id },
-      { progressInPercents: progressInPercents },
+      { $set: { progressInPercents: progressInPercents } },
     );
   }
 

@@ -16,6 +16,7 @@ export { GenerationsByUserIdServiceInDto } from './generations-by-user-id.servic
 export { GenerationsByUserIdRepoInDto } from './generations-by-user-id.repo-in.dto';
 export { GenerationsByUserIdServiceOutDto } from './generations-by-user-id.service-out.dto';
 export { GetGenerationsByUserIdReqInDto } from './get-generations-by-user-id.req-in.dto';
+export { CurrentProgressDto } from './current-progress.dto';
 
 export class ImageToSave extends GeneratedImageDto {
   name: string;

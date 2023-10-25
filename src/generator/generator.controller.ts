@@ -26,7 +26,7 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiParam,
-  ApiQuery,
+  ApiQuery, ApiTags
 } from '@nestjs/swagger';
 import { ImagesByUserIdServiceInDto } from '@generator/dto';
 import { generateHash } from '@utils';
@@ -55,6 +55,7 @@ export class GeneratorController {
       },
     },
   })
+  @ApiTags('ai')
   @ApiOkResponse({
     description:
       'Successful response with message that request dispatched, images generation started and in progress.',
@@ -87,6 +88,7 @@ export class GeneratorController {
     description: 'Successful response with an array of picture objects.',
     type: PicturesResponse,
   })
+  @ApiTags('ai')
   @ApiQuery({
     name: 'amount',
     type: Number,
@@ -128,6 +130,7 @@ export class GeneratorController {
   @ApiBadRequestResponse({
     type: BadRequestResponse,
   })
+  @ApiTags('ai')
   @Get('images/:userId')
   @HttpCode(HttpStatus.OK)
   public async getImageByUserId(
@@ -170,6 +173,7 @@ export class GeneratorController {
   @ApiBadRequestResponse({
     type: BadRequestResponse,
   })
+  @ApiTags('ai')
   @Get('generations/:userId')
   @HttpCode(HttpStatus.OK)
   public async getUserGenerations(

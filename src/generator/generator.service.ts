@@ -1,8 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OpenAiService } from '@open-ai/open-ai.service';
 import {
+  CurrentProgressDto,
   FinalGeneratedImageDto,
-  GeneratedImageDto, GenerationDto, GenerationsByUserIdServiceInDto, GenerationsByUserIdServiceOutDto,
+  GeneratedImageDto,
+  GenerationDto,
+  GenerationsByUserIdServiceInDto,
+  GenerationsByUserIdServiceOutDto,
   ImagesByUserIdServiceOutDto,
   ImageToSave,
   MainGeneratorDto,
@@ -22,6 +26,7 @@ import {
 import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { QueueKeys } from '@generator/queue.keys';
 import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
+import { GenProgressService } from '@generator/gen-progress.service';
 
 @Injectable()
 export class GeneratorService {
@@ -38,6 +43,7 @@ export class GeneratorService {
     private readonly imageRepository: ImageRepositoryInterface,
     @Inject(GeneratorDIKeys.GenerationRepository)
     private readonly generationRepository: GenerationRepositoryInterface,
+    private readonly generationProgressService: GenProgressService,
   ) {}
 
   public async processQueueItem(data: MainGeneratorDto): Promise<void> {
@@ -47,6 +53,7 @@ export class GeneratorService {
     );
     await this.mailService.sendGreetingsMessage(user.email, query);
     this.logger.log(`Successfully greetings message to user ${user.email}`);
+    await this.generationProgressService.update(data.requestId, 23);
     const images: GeneratedImageDto[] = await this.generateMainImages(data);
     const finalImages: FinalGeneratedImageDto[] = images.map(
       (i: GeneratedImageDto) => ({
@@ -55,6 +62,7 @@ export class GeneratorService {
       }),
     );
     await this.saveImages(finalImages, data, requestId);
+    await this.generationProgressService.update(data.requestId, 100);
     this.logger.log(
       `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
     );
@@ -95,6 +103,11 @@ export class GeneratorService {
     this.logger.log(
       `Dispatched job for user '${dto.user.email}' with query '${dto.query}'`,
     );
+    await this.generationProgressService.init(
+      dto.user.id,
+      dto.requestId,
+      dto.query,
+    );
   }
 
   public async generateMainImages(dto: MainGeneratorDto) {
@@ -105,16 +118,25 @@ export class GeneratorService {
     const textPrompts: string[] =
       await this.textGenerator.generatePromptsForImages(dto.query);
     const resultImages: GeneratedImageDto[] = [];
+    const progress: CurrentProgressDto =
+      await this.generationProgressService.getProgress(dto.requestId);
+    const step: number = Math.ceil(
+      progress.progressLeft / generationServices.length,
+    );
+    const resultStep: number = step < 10 ? step : step - 10;
     for (const generationService of generationServices) {
       const generationImages: GeneratedImageDto[] =
         await generationService.generateImagesByQueries(textPrompts);
       resultImages.push(...generationImages);
+      await this.generationProgressService.increment(dto.requestId, resultStep);
     }
     return resultImages;
   }
 
   public async getRandomPics(amount: number): Promise<string[]> {
-    const names = await this.imageRepository.getRandomPicsUrls(amount);
+    const names: string[] = await this.imageRepository.getRandomPicsUrls(
+      amount,
+    );
     return names.map((name: string) => publicImgUrl(name));
   }
 

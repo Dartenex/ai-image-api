@@ -14,6 +14,7 @@ import { DbModule } from '@db/db.module';
 import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { GeneratorQueueProcessor } from '@generator/generator.queue-processor';
 import { GenerationRepository } from '@generator/generation.repository';
+import { GenProgressService } from '@generator/gen-progress.service';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -66,6 +67,7 @@ const queueOptions: QueueOptions = {
       useClass: GenerationRepository,
     },
     GeneratorQueueProcessor,
+    GenProgressService,
   ],
   controllers: [GeneratorController],
 })
