@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Configuration, OpenAIApi } from 'openai';
-import { promptsDelimiter, threeTextsGenerationPrompt } from './prompts';
+import { Configuration, CreateChatCompletionResponse, OpenAIApi } from 'openai';
+import {
+  promptNumber2,
+  promptsDelimiter,
+  threeTextsGenerationPrompt,
+} from './prompts';
 import { ConfigService } from '@nestjs/config';
+import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class OpenAiService {
@@ -22,14 +27,21 @@ export class OpenAiService {
       messages: [
         {
           role: 'assistant',
-          content: `${threeTextsGenerationPrompt} ${query}`,
+          content: promptNumber2(query),
         },
       ],
       n: 1,
     });
-    return results.data.choices[0].message.content
-      .split('\n\n')
-      .map((s) => s.replace(promptsDelimiter, ''))
-      .filter((_) => _);
+    const result: { prompt_1: string; prompt_2: string } = JSON.parse(
+      results.data.choices[0].message.content,
+    );
+    const resultPrompts: string[] = [];
+    if (result?.prompt_1) {
+      resultPrompts.push(result.prompt_1);
+    }
+    if (result?.prompt_2) {
+      resultPrompts.push(result.prompt_2);
+    }
+    return resultPrompts;
   }
 }
