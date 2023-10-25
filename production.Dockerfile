@@ -4,8 +4,8 @@ WORKDIR /app
 COPY package-lock.json .
 COPY package.json .
 
-COPY email-builder/package.json ./email-builder
-COPY email-builder/package-lock.json ./email-builder
+COPY email-builder/package.json /app/email-builder/package.json
+COPY email-builder/package-lock.json /app/email-builder/package-lock.json
 
 RUN cd /app/email-builder && npm i
 
