@@ -57,7 +57,6 @@ The prompts you provide will be in English. Please pay attention:- Concepts that
 
 Important points to note :
 - I will provide you with a keyword and you will generate two different types of prompts with lots of details as given in the prompt structure
-- Must be in vbnet code block for easy copy-paste and only provide prompt.
 - The Prompt output should not be longer than 70 words
 - Return prompts in JSON object with keys prompt_1, prompt_2
 

@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Configuration, CreateChatCompletionResponse, OpenAIApi } from 'openai';
-import {
-  promptNumber2,
-  promptsDelimiter,
-  threeTextsGenerationPrompt,
-} from './prompts';
+import { Configuration, OpenAIApi } from 'openai';
+import { promptNumber2 } from './prompts';
 import { ConfigService } from '@nestjs/config';
-import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class OpenAiService {
   private ai: OpenAIApi;
-  private defaultModel = 'gpt-3.5-turbo';
+  private readonly defaultModel: string = 'gpt-4';
 
   public constructor(private configService: ConfigService) {
     this.ai = new OpenAIApi(
