@@ -101,8 +101,9 @@ export class GeneratorService {
       this.midjourneyAi,
       this.leonardoAi,
     ];
-    const textPrompts: string[] =
-      await this.textGenerator.generatePromptsForImages(dto.query);
+    // const textPrompts: string[] =
+    //   await this.textGenerator.generatePromptsForImages(dto.query);
+    const textPrompts: string[] = [dto.query];
     const resultImages: GeneratedImageDto[] = [];
     for (const generationService of generationServices) {
       const generationImages: GeneratedImageDto[] =
