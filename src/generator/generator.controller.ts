@@ -5,7 +5,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -80,7 +79,7 @@ export class GeneratorController {
       requestId: requestId,
       redirectUrl,
     };
-    // await this.generatorService.dispatchGenerationJob(dto);
+    await this.generatorService.dispatchGenerationJob(dto);
     await this.generatorService.processQueueItem(dto);
     return { result: true, requestId: requestId };
   }
@@ -135,13 +134,13 @@ export class GeneratorController {
   public async getImageByUserId(
     @Param() query: GetImagesByUserIdReqInDto,
     @Query('page') page?: number | null,
-    @Query('perPage') perPage?: number| null,
+    @Query('perPage') perPage?: number | null,
   ): Promise<ImagesByUserIdServiceOutDto> {
     const { userId } = query;
     const dto: ImagesByUserIdServiceInDto = {
       userId: userId,
-      page: page ?? 1,
-      perPage: perPage ?? 20,
+      page: Number(page ?? 1),
+      perPage: Number(perPage ?? 20),
     };
     const result: ImagesByUserIdServiceOutDto =
       await this.generatorService.imagesListByUserId(dto);

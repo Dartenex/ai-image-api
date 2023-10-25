@@ -3,9 +3,11 @@ import { BullModule } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import { TestConsumer } from './test.consumer';
 import { TestController } from './test.controller';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
   imports: [
+    StorageModule,
     BullModule.registerQueueAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({

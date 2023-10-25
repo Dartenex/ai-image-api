@@ -1,14 +1,33 @@
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { render } from '@react-email/components';
 import { GenerationSuccessMessage } from '../../email-builder/emails';
 import puppeteer from 'puppeteer';
+import { StorageService } from '../storage/storage.service';
 
 @Controller('test')
 export class TestController {
-  public constructor(@InjectQueue('test-job') private testJobQueue: Queue) {}
+  public constructor(
+    @InjectQueue('test-job') private testJobQueue: Queue,
+    private readonly storageService: StorageService,
+  ) {}
+
+  @ApiExcludeEndpoint()
+  @Get('/image')
+  @HttpCode(HttpStatus.OK)
+  public async image(@Query('link') link: string) {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox'],
+    });
+    const page = await browser.newPage();
+    await browser.close();
+    return {
+      success: true,
+    };
+  }
 
   @ApiExcludeEndpoint()
   @Get('/health')
