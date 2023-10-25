@@ -80,7 +80,8 @@ export class GeneratorController {
       requestId: requestId,
       redirectUrl,
     };
-    await this.generatorService.dispatchGenerationJob(dto);
+    // await this.generatorService.dispatchGenerationJob(dto);
+    await this.generatorService.processQueueItem(dto);
     return { result: true, requestId: requestId };
   }
 
@@ -133,8 +134,8 @@ export class GeneratorController {
   @HttpCode(HttpStatus.OK)
   public async getImageByUserId(
     @Param() query: GetImagesByUserIdReqInDto,
-    @Query('page') page: number,
-    @Query('perPage', ParseIntPipe) perPage: number,
+    @Query('page') page?: number | null,
+    @Query('perPage') perPage?: number| null,
   ): Promise<ImagesByUserIdServiceOutDto> {
     const { userId } = query;
     const dto: ImagesByUserIdServiceInDto = {

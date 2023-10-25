@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import puppeteer from 'puppeteer';
@@ -9,6 +9,7 @@ import { storageDir } from '@utils';
 export class StorageService {
   private client: S3Client;
   private readonly s3Bucket: string;
+  private readonly logger: Logger = new Logger(StorageService.name);
 
   public constructor(private config: ConfigService) {
     this.client = new S3Client({
@@ -28,16 +29,23 @@ export class StorageService {
   }
 
   public async downloadAndSave(link: string, name: string) {
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox'],
-    });
-    const page = await browser.newPage();
-    const view = await page.goto(link);
-    writeFileSync(this.getFilePath(name), await view.buffer());
-    await browser.close();
-    await this.uploadImage(name, this.getExtension(name));
-    this.deleteFile(name);
+    try {
+      this.logger.log(`Download and save START by link=${link} and name=${name}`);
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox'],
+      });
+      const page = await browser.newPage();
+      const view = await page.goto(link);
+      writeFileSync(this.getFilePath(name), await view.buffer());
+      await browser.close();
+      await this.uploadImage(name, this.getExtension(name));
+      this.deleteFile(name);
+      this.logger.log(`Download and save FINISH by link=${link} and name=${name}`);
+    } catch (e) {
+      this.logger.error('Download and save image fail!');
+      this.logger.error(e);
+    }
   }
 
   private deleteFile(name: string): void {

@@ -63,7 +63,7 @@ export class GeneratorService {
     requestId: string,
   ) {
     const resultImages: ImageToSave[] = images.map((i: GeneratedImageDto) => {
-      const extension = this.getExtension(i.url);
+      const extension: string = this.getExtension(i.url);
 
       return {
         ...i,
