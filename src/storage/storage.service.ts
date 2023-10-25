@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser, HTTPResponse, Page } from 'puppeteer';
 import { writeFileSync, readFileSync, rmSync } from 'fs';
 import { storageDir } from '@utils';
 
@@ -31,13 +31,16 @@ export class StorageService {
   public async downloadAndSave(link: string, name: string) {
     try {
       this.logger.log(`Download and save START by link=${link} and name=${name}`);
-      const browser = await puppeteer.launch({
+      const browser: Browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox'],
       });
-      const page = await browser.newPage();
-      const view = await page.goto(link);
-      writeFileSync(this.getFilePath(name), await view.buffer());
+      const page: Page = await browser.newPage();
+      const view: HTTPResponse = await page.goto(link);
+      const fileData = await view.buffer();
+      this.logger.log(fileData);
+      console.log(fileData);
+      writeFileSync(this.getFilePath(name), fileData);
       await browser.close();
       await this.uploadImage(name, this.getExtension(name));
       this.deleteFile(name);
