@@ -38,8 +38,6 @@ export class StorageService {
       const page: Page = await browser.newPage();
       const view: HTTPResponse = await page.goto(link);
       const fileData = await view.buffer();
-      this.logger.log(fileData);
-      console.log(fileData);
       writeFileSync(this.getFilePath(name), fileData);
       await browser.close();
       await this.uploadImage(name, this.getExtension(name));
