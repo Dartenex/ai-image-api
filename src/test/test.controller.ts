@@ -17,13 +17,13 @@ export class TestController {
   @ApiExcludeEndpoint()
   @Get('/image')
   @HttpCode(HttpStatus.OK)
-  public async image(@Query('link') link: string) {
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox'],
-    });
-    const page = await browser.newPage();
-    await browser.close();
+  public async image(@Query('link') link: string, @Query('name') name: string) {
+    if (!link || !name) {
+      return {
+        success: false,
+      };
+    }
+    await this.storageService.downloadAndSave(link, name);
     return {
       success: true,
     };
