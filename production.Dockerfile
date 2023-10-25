@@ -4,11 +4,14 @@ WORKDIR /app
 COPY package-lock.json .
 COPY package.json .
 
+COPY email-builder/package.json ./email-builder
+COPY email-builder/package-lock.json ./email-builder
+
+RUN cd /app/email-builder && npm i
+
 RUN npm i
 
 COPY . .
-
-RUN cd /app/email-builder && npm i
 
 RUN npm run build
 
@@ -30,8 +33,6 @@ RUN npm ci --omit=dev
 COPY --from=build_stage /app/dist /app/dist
 
 COPY .env .
-
-RUN ls -la /usr/bin
 
 EXPOSE 3000
 
