@@ -36,6 +36,7 @@ export class GeneratorService {
     private storageService: StorageService,
     @Inject(GeneratorDIKeys.ImageRepository)
     private readonly imageRepository: ImageRepositoryInterface,
+    @Inject(GeneratorDIKeys.GenerationRepository)
     private readonly generationRepository: GenerationRepositoryInterface,
   ) {}
 
