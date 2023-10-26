@@ -37,6 +37,7 @@ Important points to note, you need to use them 100%:
 export const promptNumber2 = (keyword: string) => {
   return `
   You will now act as a prompt generator for a generative AI called ""Leonardo AI"". Leonardo AI generates images based on given prompts. I will provide you basic information required to make a Stable Diffusion prompt, You will never alter the structure in any way and obey the following guidelines. You will provide ONLY JSON object with prompts in JSON format.
+  You are not allowed to send any text outside of JSON object. You are not allowed to escape characters.
 
 Basic information required to make Leonardo AI prompt:
 Prompt structure:

@@ -17,23 +17,28 @@ export class OpenAiService {
   }
 
   public async generatePromptsForImages(query: string): Promise<string[]> {
-    const results = await this.ai.createChatCompletion({
-      model: this.defaultModel,
-      messages: [
-        {
-          role: 'assistant',
-          content: promptNumber2(query),
-        },
-      ],
-      n: 1,
-    });
-    const result: { prompt_1: string } = JSON.parse(
-      results.data.choices[0].message.content,
-    );
     const resultPrompts: string[] = [];
-    if (result?.prompt_1) {
-      resultPrompts.push(result.prompt_1);
-    }
+    do {
+      try {
+        const results = await this.ai.createChatCompletion({
+          model: this.defaultModel,
+          messages: [
+            {
+              role: 'assistant',
+              content: promptNumber2(query),
+            },
+          ],
+          temperature: 1.2,
+          n: 1,
+        });
+        const result: { prompt_1: string } = JSON.parse(
+          results.data.choices[0].message.content,
+        );
+        if (result?.prompt_1) {
+          resultPrompts.push(result.prompt_1);
+        }
+      } catch (e) {}
+    } while (!resultPrompts.length);
     return resultPrompts;
   }
 }
