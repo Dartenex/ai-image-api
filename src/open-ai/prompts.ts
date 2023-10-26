@@ -56,9 +56,9 @@ The weight of a keyword can be adjusted by using the syntax (((keyword))) , put 
 The prompts you provide will be in English. Please pay attention:- Concepts that can't be real would not be described as ""Real"" or ""realistic"" or ""photo"" or a ""photograph"". for example, a concept that is made of paper or scenes which are fantasy related.- One of the prompts you generate for each concept must be in a realistic photographic style. you should also choose a lens type and size for it. Don't choose an artist for the realistic photography prompts.- Separate the different prompts with two new lines.
 
 Important points to note :
-- I will provide you with a keyword and you will generate two different types of prompts with lots of details as given in the prompt structure
+- I will provide you with a keyword and you will generate one prompt with lots of details as given in the prompt structure
 - The Prompt output should not be longer than 70 words
-- Return prompts in JSON object with keys prompt_1, prompt_2
+- Return prompts in JSON object with keys prompt_1
 
 Keyword - "${keyword}"
 `;

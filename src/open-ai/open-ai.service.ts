@@ -27,15 +27,12 @@ export class OpenAiService {
       ],
       n: 1,
     });
-    const result: { prompt_1: string; prompt_2: string } = JSON.parse(
+    const result: { prompt_1: string } = JSON.parse(
       results.data.choices[0].message.content,
     );
     const resultPrompts: string[] = [];
     if (result?.prompt_1) {
       resultPrompts.push(result.prompt_1);
-    }
-    if (result?.prompt_2) {
-      resultPrompts.push(result.prompt_2);
     }
     return resultPrompts;
   }
