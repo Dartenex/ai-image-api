@@ -4,10 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param, ParseBoolPipe,
+  Param,
+  ParseBoolPipe,
   Post,
   Query,
-  Req
+  Req,
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
