@@ -15,6 +15,15 @@ export class TestController {
   ) {}
 
   @ApiExcludeEndpoint()
+  @Get('/proc')
+  @HttpCode(HttpStatus.OK)
+  public async proc() {
+    return {
+      pid: process?.pid ?? 'UNKNOWN',
+    };
+  }
+
+  @ApiExcludeEndpoint()
   @Get('/image')
   @HttpCode(HttpStatus.OK)
   public async image(@Query('link') link: string, @Query('name') name: string) {
