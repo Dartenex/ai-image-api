@@ -1,7 +1,7 @@
 ###
 // @no-log
-#POST https://api.selfcouture.co/generator/main
-GET http://localhost:3000/test/proc
+#GET http://localhost:3000/test/proc
+GET https://api.selfcouture.co/test/proc
 Accept: application/json
 APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 
@@ -25,7 +25,7 @@ APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 ###
 // @no-log
 #POST https://api.selfcouture.co/generator/main
-GET http://localhost:3000/generator/images/some_user_id_here
+GET http://localhost:3000/generator/generations/some_user_id_here?onlyActive=true
 Accept: application/json
 APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 

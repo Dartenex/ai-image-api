@@ -4,10 +4,10 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
+  Param, ParseBoolPipe,
   Post,
   Query,
-  Req,
+  Req
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
@@ -164,6 +164,12 @@ export class GeneratorController {
     description: 'By default amount set to 1',
   })
   @ApiQuery({
+    name: 'onlyActive',
+    type: Boolean,
+    required: false,
+    description: 'By default amount set to true',
+  })
+  @ApiQuery({
     name: 'perPage',
     type: Number,
     required: false,
@@ -182,14 +188,16 @@ export class GeneratorController {
   @HttpCode(HttpStatus.OK)
   public async getUserGenerations(
     @Param() query: GetGenerationsByUserIdReqInDto,
-    @Query('page') page?: number | null,
-    @Query('perPage') perPage?: number | null,
+    @Query('page') page?: number | undefined,
+    @Query('perPage') perPage?: number | undefined,
+    @Query('onlyActive') onlyActive?: string | undefined,
   ): Promise<GenerationsByUserIdServiceOutDto> {
     const { userId } = query;
     const dto: GenerationsByUserIdServiceInDto = {
       userId: userId,
       page: Number(page ?? 1),
       perPage: Number(perPage ?? 20),
+      onlyActive: onlyActive !== 'false',
     };
     return await this.generatorService.getGenerationsProgressByUser(dto);
   }

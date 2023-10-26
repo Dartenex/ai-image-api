@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MongodbService } from '@db/drivers';
 import { ConfigService } from '@nestjs/config';
-import { Collection, InsertOneResult, WithId } from 'mongodb';
+import { Collection, Filter, InsertOneResult, WithId } from 'mongodb';
 import { GenerationDto, GenerationsByUserIdRepoInDto } from '@generator/dto';
 import { GenerationRepositoryInterface } from '@generator/contracts';
 import { offset } from '@utils';
@@ -40,8 +40,16 @@ export class GenerationRepository implements GenerationRepositoryInterface {
   public async generationsByUserId(
     data: GenerationsByUserIdRepoInDto,
   ): Promise<GenerationDto[]> {
+    const filter: Filter<GenerationDto> = {
+      userId: data.userId,
+    };
+    if (data.onlyActive) {
+      filter.progressInPercents = {
+        $lt: 100,
+      };
+    }
     const items: WithId<GenerationDto>[] = await this.collection()
-      .find({ userId: data.userId })
+      .find(filter)
       .sort('createdAt', 'desc')
       .limit(data.perPage)
       .skip(offset(data.page, data.perPage))
