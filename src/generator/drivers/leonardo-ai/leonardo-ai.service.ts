@@ -42,18 +42,18 @@ export class LeonardoAiService implements ImageGeneratorInterface {
           await this.sdk.createGeneration({
             prompt: query,
             modelId: this.modelId,
-            // height: 768,
-            // width: 512,
-            // alchemy: true,
-            // contrastRatio: 0.5,
-            // guidance_scale: 14,
-            // num_images: 4,
-            // nsfw: true,
-            // photoReal: false,
-            // public: false,
-            // promptMagic: true,
-            // promptMagicStrength: 0.5,
-            // promptMagicVersion: 'V3'
+            height: 768,
+            width: 512,
+            alchemy: true,
+            contrastRatio: 0.5,
+            guidance_scale: 14,
+            num_images: 4,
+            nsfw: true,
+            photoReal: false,
+            public: false,
+            promptMagic: true,
+            promptMagicStrength: 0.5,
+            promptMagicVersion: 'v3',
           });
         const genId: string = response.data.sdGenerationJob.generationId;
         images = await this.getResult(genId);
