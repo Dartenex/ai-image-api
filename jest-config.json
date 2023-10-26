@@ -1,0 +1,26 @@
+{
+  "verbose": true,
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "src",
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "**/*.(t|j)s"
+  ],
+  "coverageDirectory": "../coverage",
+  "testEnvironment": "node",
+  "moduleNameMapper": {
+    "@open-ai/(.*)": "<rootDir>/open-ai/$1",
+    "@generator/(.*)": "<rootDir>/generator/$1",
+    "@db/*": "<rootDir>/db/*",
+    "@storage/*": "<rootDir>/storage/$1",
+    "@mail/*": "<rootDir>/mail/$1",
+    "@utils": "<rootDir>/utils"
+  }
+}

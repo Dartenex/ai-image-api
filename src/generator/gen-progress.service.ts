@@ -3,7 +3,7 @@ import {
   GenerationRepositoryInterface,
   GeneratorDIKeys,
 } from '@generator/contracts';
-import { CurrentProgressDto } from '@generator/dto';
+import { CurrentProgressDto, GenerationDto } from '@generator/dto';
 
 @Injectable()
 export class GenProgressService {
@@ -21,25 +21,29 @@ export class GenProgressService {
     };
   }
 
-  public async increment(requestId: string, incVal: number): Promise<void> {
+  public async increment(requestId: string, incVal: number): Promise<number> {
     const currentProgress: CurrentProgressDto = await this.getProgress(
       requestId,
     );
-    await this.update(requestId, currentProgress.currentProgress + incVal);
+    const newProgressValue: number = currentProgress.currentProgress + incVal;
+    await this.update(requestId, newProgressValue);
+    return newProgressValue;
   }
 
   public async init(
     userId: string,
     requestId: string,
     prompt: string,
-  ): Promise<void> {
-    await this.generationRepository.create({
+  ): Promise<GenerationDto> {
+    const data: GenerationDto = {
       userId: userId,
       prompt: prompt,
       progressInPercents: 0,
       createdAt: new Date().toISOString(),
       id: requestId,
-    });
+    };
+    await this.generationRepository.create(data);
+    return data;
   }
 
   public async update(

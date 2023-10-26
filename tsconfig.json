@@ -23,7 +23,8 @@
       "@open-ai/*": ["./src/open-ai/*"],
       "@generator/*": ["./src/generator/*"],
       "@db/*": ["./src/db/*"],
-      "@midjourney/*": ["./src/midjourney/*"],
+      "@storage/*": ["./src/storage/*"],
+      "@mail/*": ["./src/mail/*"],
       "@utils": ["./src/utils"]
     }
   }

@@ -12,6 +12,7 @@ RUN cd /app/email-builder && npm i
 RUN npm i
 
 COPY . .
+RUN npm run test:unit
 
 RUN npm run build
 

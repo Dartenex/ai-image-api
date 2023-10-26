@@ -14,8 +14,8 @@ import {
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { MailService } from '../mail/mail.service';
-import { StorageService } from '../storage/storage.service';
+import { MailService } from '@mail/mail.service';
+import { StorageService } from '@storage/storage.service';
 import { delayCallback, generateHash, publicImgUrl } from '@utils';
 import {
   GenerationRepositoryInterface,
