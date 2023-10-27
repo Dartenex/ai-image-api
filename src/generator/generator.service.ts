@@ -113,7 +113,7 @@ export class GeneratorService {
   public async generateMainImages(dto: MainGeneratorDto) {
     const generationServices: ImageGeneratorInterface[] = [
       this.midjourneyAi,
-      this.leonardoAi,
+      // this.leonardoAi,
     ];
     const textPrompts: string[] =
       await this.textGenerator.generatePromptsForImages(dto.query);

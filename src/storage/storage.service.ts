@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import puppeteer, { Browser, HTTPResponse, Page } from 'puppeteer';
-import { writeFileSync, readFileSync, rmSync } from 'fs';
 import { storageDir } from '@utils';
 
 @Injectable()
@@ -18,11 +17,11 @@ export class StorageService {
     this.s3Bucket = this.config.get<string>('AWS_S3_BUCKET');
   }
 
-  public async uploadImage(name: string, extension: string) {
+  public async uploadImage(name: string, extension: string, body: Buffer) {
     const uploadCommand = new PutObjectCommand({
       Bucket: this.s3Bucket,
-      Key: `images/${name}`,
-      Body: readFileSync(this.getFilePath(name)),
+      Key: `images/test_img_upload_${name}`,
+      Body: body,
       ContentType: `image/${extension}`,
     });
     await this.client.send(uploadCommand);
@@ -39,11 +38,9 @@ export class StorageService {
       });
       const page: Page = await browser.newPage();
       const view: HTTPResponse = await page.goto(link);
-      const fileData = await view.buffer();
-      writeFileSync(this.getFilePath(name), fileData);
+      const fileData: Buffer = await view.buffer();
       await browser.close();
-      await this.uploadImage(name, this.getExtension(name));
-      this.deleteFile(name);
+      await this.uploadImage(name, this.getExtension(name), fileData);
       this.logger.log(
         `Download and save FINISH by link=${link} and name=${name}`,
       );
@@ -51,14 +48,6 @@ export class StorageService {
       this.logger.error('Download and save image fail!');
       this.logger.error(e);
     }
-  }
-
-  private deleteFile(name: string): void {
-    rmSync(this.getFilePath(name));
-  }
-
-  private getFilePath(name: string): string {
-    return `${storageDir}/${name}`;
   }
 
   private getExtension(link: string): string {
