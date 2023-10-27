@@ -30,7 +30,7 @@ export class MidjourneyService implements ImageGeneratorInterface {
     do {
       try {
         const msgIdResponse: Message = await delayCallback(1000, async () => {
-          return await this.client.imagine(`${query} --ar 2:1`);
+          return await this.client.imagine(`${query} --ar 4:3`);
         });
         const messageId: string = msgIdResponse.messageId;
         if (!messageId) {

@@ -42,7 +42,7 @@ export class LeonardoAiService implements ImageGeneratorInterface {
           await this.sdk.createGeneration({
             prompt: query,
             modelId: this.modelId,
-            height: 512,
+            height: 768,
             width: 1024,
             alchemy: true,
             contrastRatio: 0.5,
