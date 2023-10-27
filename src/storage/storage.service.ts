@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import puppeteer, { Browser, HTTPResponse, Page } from 'puppeteer';
-import { storageDir } from '@utils';
 
 @Injectable()
 export class StorageService {
