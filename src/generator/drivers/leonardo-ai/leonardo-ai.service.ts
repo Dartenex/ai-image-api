@@ -10,7 +10,7 @@ import {
   CreateVariationUpscaleResponse200,
   GetGenerationByIdResponse200,
   GetVariationByIdResponse200,
-} from '../../../../.api/apis/leonardoai';
+} from '@api/leonardoai';
 import { FetchResponse } from 'api/dist/core';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class LeonardoAiService implements ImageGeneratorInterface {
       throw new Error('Leonardo AI credentials not set!');
     }
     this.sdk = sdk('@leonardoai/v1.0#28807z41owlgnis8jg');
-    this.sdk.auth(this.config.get<string>('LEONARDO_AI_API_KEY'));
+    this.sdk.auth(apiKey);
   }
 
   public async generateImagesByQuery(
