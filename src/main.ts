@@ -1,15 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
-import { existsSync, mkdirSync } from 'fs';
-import { storageDir } from '@utils';
 import { ValidationPipe } from '@nestjs/common';
-
-function initDirs() {
-  if (!existsSync(storageDir)) {
-    mkdirSync(storageDir);
-  }
-}
 
 async function bootstrap() {
   const port: number = Number(process.env.APP_PORT) || 3000;
@@ -23,8 +15,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
-
-  initDirs();
 
   app.useGlobalPipes(new ValidationPipe());
 
