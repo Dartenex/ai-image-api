@@ -22,7 +22,7 @@ import {
   ImagesByUserIdServiceOutDto,
   MainGeneratorDto,
   MainResponse,
-  PicturesResponse,
+  PicturesResponse, UpscaleServiceOutDto
 } from '@generator/dto';
 import { Request } from 'express';
 import {
@@ -201,5 +201,12 @@ export class GeneratorController {
       onlyActive: onlyActive !== 'false',
     };
     return await this.generatorService.getGenerationsProgressByUser(dto);
+  }
+
+  @Post('upscale')
+  public async upscale(): Promise<UpscaleServiceOutDto> {
+    return {
+      imgUrl: '',
+    };
   }
 }

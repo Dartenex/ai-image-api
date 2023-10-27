@@ -26,12 +26,11 @@ export class MidjourneyService implements ImageGeneratorInterface {
     let attempts = 3;
     let success = false;
     let response: MessageAndProgress;
-    let imageUrls: string[] = [];
     this.logger.log(`Started generating images with query '${query}'`);
     do {
       try {
         const msgIdResponse: Message = await delayCallback(1000, async () => {
-          return await this.client.imagine(query);
+          return await this.client.imagine(`${query} --ar 2:1`);
         });
         const messageId: string = msgIdResponse.messageId;
         if (!messageId) {
