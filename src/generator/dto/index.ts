@@ -18,6 +18,8 @@ export { GenerationsByUserIdServiceOutDto } from './generations-by-user-id.servi
 export { GetGenerationsByUserIdReqInDto } from './get-generations-by-user-id.req-in.dto';
 export { CurrentProgressDto } from './current-progress.dto';
 export { UpscaleServiceOutDto } from './upscale.service-out.dto';
+export { UpscaleServiceInDto } from './upscale.service-in.dto';
+export { UpscaleReqInDto } from './upscale.req-in.dto';
 
 export class ImageToSave extends GeneratedImageDto {
   name: string;

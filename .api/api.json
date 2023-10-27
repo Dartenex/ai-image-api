@@ -6,6 +6,12 @@
       "source": "@leonardoai/v1.0#28807z41owlgnis8jg",
       "integrity": "sha512-OLM3VWb1HKeSXubSNcueATXWuMSkxKDLNAsuqQjQuAWWswaFpqOSxHpgxFBgak4ffTFm14gMiJ0SaxeGaaAv0Q==",
       "installerVersion": "6.1.0"
+    },
+    {
+      "identifier": "picsartfordevelopers",
+      "source": "@picsartfordevelopers/v1.0#11wm1w0lnsym3a6",
+      "integrity": "sha512-yVE7Etr04Smwip5mMRLb7KcatHq48hshFnc6VhtNLG8W4fUdOWpwWW3xbK2AUSjHKb2KhFGEbGYcXQhCrBpKeg==",
+      "installerVersion": "6.1.0"
     }
   ]
 }

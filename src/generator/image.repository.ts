@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ImageRepositoryInterface } from '@generator/contracts';
 import { MongodbService } from '@db/drivers';
-import { Collection, WithId } from 'mongodb';
+import { Collection, WithId, ObjectId } from 'mongodb';
 import {
   GeneratedImageDto,
   ImagesByUserIdRepoInDto,
@@ -17,6 +17,16 @@ export class ImageRepository implements ImageRepositoryInterface {
     private readonly mongoDb: MongodbService,
     private readonly config: ConfigService,
   ) {}
+
+  async getById(id: string): Promise<PublicImage | null> {
+    const item: WithId<ImageToSave> | null = await this.collection().findOne({
+      _id: new ObjectId(id),
+    });
+    if (!item) {
+      return null;
+    }
+    return this.toPublicImage(item);
+  }
 
   async getRandomPicsUrls(amount: number): Promise<string[]> {
     const pipeline = [{ $sample: { size: amount } }];
@@ -48,18 +58,24 @@ export class ImageRepository implements ImageRepositoryInterface {
       .sort('createdAt', 'desc')
       .toArray();
 
-    return requestImages.map(
-      (image: WithId<ImageToSave>): PublicImage => ({
-        id: image._id.toString(),
-        publicUrl: publicImgUrl(image.name),
-        userId: image.userId,
-        name: image.name,
-        requestId: image.requestId,
-        createdAt: image.createdAt,
-        isUpscaled: image.isUpscaled,
-        prompt: image?.prompt ?? null,
-      }),
-    );
+    return this.toPublicImages(requestImages);
+  }
+
+  private toPublicImages(items: WithId<ImageToSave>[]): PublicImage[] {
+    return items.map(this.toPublicImage);
+  }
+
+  private toPublicImage(image: WithId<ImageToSave>): PublicImage {
+    return {
+      id: image._id.toString(),
+      publicUrl: publicImgUrl(image.name),
+      userId: image.userId,
+      name: image.name,
+      requestId: image.requestId,
+      createdAt: image.createdAt,
+      isUpscaled: image.isUpscaled,
+      prompt: image?.prompt ?? null,
+    };
   }
 
   private collection(): Collection<ImageToSave> {

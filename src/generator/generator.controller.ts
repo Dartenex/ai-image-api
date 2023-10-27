@@ -21,7 +21,10 @@ import {
   ImagesByUserIdServiceOutDto,
   MainGeneratorDto,
   MainResponse,
-  PicturesResponse, UpscaleServiceOutDto
+  PicturesResponse,
+  UpscaleReqInDto,
+  UpscaleServiceInDto,
+  UpscaleServiceOutDto,
 } from '@generator/dto';
 import { Request } from 'express';
 import {
@@ -40,24 +43,7 @@ export class GeneratorController {
   public constructor(private generatorService: GeneratorService) {}
   @Post('main')
   @ApiBody({
-    schema: {
-      properties: {
-        prompt: {
-          type: 'string',
-        },
-        email: {
-          type: 'string',
-        },
-        userId: {
-          type: 'string',
-        },
-        redirectUrl: {
-          type: 'string',
-          description:
-            'User will receive email with given redirect link to view his images.',
-        },
-      },
-    },
+    type: GenerateReqInDto,
   })
   @ApiTags('ai')
   @ApiOkResponse({
@@ -203,9 +189,26 @@ export class GeneratorController {
   }
 
   @Post('upscale')
-  public async upscale(): Promise<UpscaleServiceOutDto> {
+  @ApiTags('ai')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    type: UpscaleReqInDto,
+    description: 'Endpoint requires image id to process upscaling.',
+  })
+  @ApiOkResponse({
+    description:
+      'Successful response with an array of generations with data about prompts and progress.',
+    type: UpscaleServiceOutDto,
+  })
+  public async upscale(
+    @Body() body: UpscaleReqInDto,
+  ): Promise<UpscaleServiceOutDto> {
+    const dto: UpscaleServiceInDto = {
+      imgId: body.imgId,
+    };
+    const upscaledUrl: string = await this.generatorService.upscaleImage(dto);
     return {
-      imgUrl: '',
+      imgUrl: upscaledUrl,
     };
   }
 }

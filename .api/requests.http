@@ -1,5 +1,16 @@
 ###
 // @no-log
+POST http://localhost:3000/generator/upscale
+Accept: application/json
+Content-Type: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
+
+{
+  "imgId": "65302b8dec0d732844052466"
+}
+
+###
+// @no-log
 #GET http://localhost:3000/test/proc
 GET https://api.selfcouture.co/test/proc
 Accept: application/json
@@ -48,7 +59,7 @@ APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 
 ###
 // @no-log
-GET http://localhost:4050/generator/images/some_user_id_here?perPage=1&page=1
+GET http://localhost:3000/generator/images/some_user_id_here
 Accept: application/json
 APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
 

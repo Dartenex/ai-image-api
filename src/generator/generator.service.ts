@@ -10,7 +10,7 @@ import {
   ImagesByUserIdServiceOutDto,
   ImageToSave,
   MainGeneratorDto,
-  PublicImage,
+  PublicImage, UpscaleServiceInDto
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -27,6 +27,8 @@ import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { QueueKeys } from '@generator/queue.keys';
 import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
 import { GenProgressService } from '@generator/gen-progress.service';
+import { PicsartService } from '@generator/drivers/picsart';
+import { UpscaleResDto } from '@generator/drivers/picsart/upscale.res.dto';
 
 @Injectable()
 export class GeneratorService {
@@ -44,7 +46,21 @@ export class GeneratorService {
     @Inject(GeneratorDIKeys.GenerationRepository)
     private readonly generationRepository: GenerationRepositoryInterface,
     private readonly generationProgressService: GenProgressService,
+    private readonly picsartService: PicsartService,
   ) {}
+
+  public async upscaleImage(data: UpscaleServiceInDto): Promise<string> {
+    const image: PublicImage | null = await this.imageRepository.getById(
+      data.imgId,
+    );
+    if (!image) {
+      throw new Error('Image not found!');
+    }
+    const result: UpscaleResDto = await this.picsartService.upscale(
+      image.publicUrl,
+    );
+    return result.url;
+  }
 
   public async processQueueItem(data: MainGeneratorDto): Promise<void> {
     const { user, query, requestId } = data;
@@ -113,7 +129,7 @@ export class GeneratorService {
   public async generateMainImages(dto: MainGeneratorDto) {
     const generationServices: ImageGeneratorInterface[] = [
       this.midjourneyAi,
-      // this.leonardoAi,
+      this.leonardoAi,
     ];
     const textPrompts: string[] =
       await this.textGenerator.generatePromptsForImages(dto.query);
@@ -138,11 +154,6 @@ export class GeneratorService {
       amount,
     );
     return names.map((name: string) => publicImgUrl(name));
-  }
-
-  public async upscaleImage(url: string): Promise<string> {
-    await delayCallback(2345, () => 1);
-    return url;
   }
 
   public async imagesListByUserId(

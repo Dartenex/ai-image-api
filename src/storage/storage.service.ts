@@ -17,9 +17,9 @@ export class StorageService {
   }
 
   public async uploadImage(name: string, extension: string, body: Buffer) {
-    const uploadCommand = new PutObjectCommand({
+    const uploadCommand: PutObjectCommand = new PutObjectCommand({
       Bucket: this.s3Bucket,
-      Key: `images/test_img_upload_${name}`,
+      Key: `images/${name}`,
       Body: body,
       ContentType: `image/${extension}`,
     });
