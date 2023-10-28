@@ -193,7 +193,8 @@ export class GeneratorController {
   @HttpCode(HttpStatus.OK)
   @ApiBody({
     type: UpscaleReqInDto,
-    description: 'Endpoint requires image id to process upscaling.',
+    description:
+      'Endpoint requires image url (ONLY HTTPS) to process upscaling.',
   })
   @ApiOkResponse({
     description:
@@ -204,7 +205,7 @@ export class GeneratorController {
     @Body() body: UpscaleReqInDto,
   ): Promise<UpscaleServiceOutDto> {
     const dto: UpscaleServiceInDto = {
-      imgId: body.imgId,
+      imgUrl: body.imgUrl,
     };
     const upscaledUrl: string = await this.generatorService.upscaleImage(dto);
     return {

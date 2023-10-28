@@ -1,3 +1,3 @@
 export class UpscaleServiceInDto {
-  imgId: string;
+  imgUrl: string;
 }

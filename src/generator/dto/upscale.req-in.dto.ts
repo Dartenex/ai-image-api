@@ -1,12 +1,19 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpscaleReqInDto {
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({
+    message: 'imgUrl field is required',
+  })
+  @IsString({
+    message: 'imgUrl field is required',
+  })
   @ApiProperty({
     type: 'string',
     required: true,
   })
-  imgId: string;
+  @Matches(/https:\/\/.+/gi, {
+    message: 'imgUrl must be https',
+  })
+  imgUrl: string;
 }

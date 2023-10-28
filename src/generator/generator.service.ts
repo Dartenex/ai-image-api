@@ -10,13 +10,14 @@ import {
   ImagesByUserIdServiceOutDto,
   ImageToSave,
   MainGeneratorDto,
-  PublicImage, UpscaleServiceInDto
+  PublicImage,
+  UpscaleServiceInDto
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { MailService } from '@mail/mail.service';
 import { StorageService } from '@storage/storage.service';
-import { delayCallback, generateHash, publicImgUrl } from '@utils';
+import { generateHash, publicImgUrl } from '@utils';
 import {
   GenerationRepositoryInterface,
   GeneratorDIKeys,
@@ -50,14 +51,8 @@ export class GeneratorService {
   ) {}
 
   public async upscaleImage(data: UpscaleServiceInDto): Promise<string> {
-    const image: PublicImage | null = await this.imageRepository.getById(
-      data.imgId,
-    );
-    if (!image) {
-      throw new Error('Image not found!');
-    }
     const result: UpscaleResDto = await this.picsartService.upscale(
-      image.publicUrl,
+      data.imgUrl,
     );
     return result.url;
   }
