@@ -11,7 +11,7 @@ import {
   ImageToSave,
   MainGeneratorDto,
   PublicImage,
-  UpscaleServiceInDto
+  UpscaleServiceInDto,
 } from '@generator/dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
