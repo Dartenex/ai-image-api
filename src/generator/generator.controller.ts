@@ -7,7 +7,7 @@ import {
   Param,
   Post,
   Query,
-  Req,
+  Req, Res
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {
@@ -26,7 +26,7 @@ import {
   UpscaleServiceInDto,
   UpscaleServiceOutDto,
 } from '@generator/dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -203,13 +203,20 @@ export class GeneratorController {
   })
   public async upscale(
     @Body() body: UpscaleReqInDto,
-  ): Promise<UpscaleServiceOutDto> {
+    @Res() response: Response,
+  ) {
     const dto: UpscaleServiceInDto = {
       imgUrl: body.imgUrl,
     };
     const upscaledUrl: string = await this.generatorService.upscaleImage(dto);
-    return {
+    if (!upscaledUrl) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        error: 'Something went wrong during upscaling!',
+      });
+    }
+    const resultData: UpscaleServiceOutDto = {
       imgUrl: upscaledUrl,
     };
+    return response.status(HttpStatus.OK).json(resultData);
   }
 }
