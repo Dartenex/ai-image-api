@@ -7,7 +7,8 @@ import {
   Param,
   Post,
   Query,
-  Req, Res
+  Req,
+  Res,
 } from '@nestjs/common';
 import { GeneratorService } from './generator.service';
 import {

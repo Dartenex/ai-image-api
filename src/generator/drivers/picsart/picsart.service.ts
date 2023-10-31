@@ -3,6 +3,7 @@ import * as sdk from 'api';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { UpscaleResDto } from '@generator/drivers/picsart/upscale.res.dto';
+import { delayCallback } from '@utils';
 
 @Injectable()
 export class PicsartService {
@@ -26,25 +27,28 @@ export class PicsartService {
     let url = '';
     do {
       try {
-        const result = await axios.post(
-          'https://api.picsart.io/tools/1.0/upscale',
-          {
-            upscale_factor: 'x4',
-            format: 'PNG',
-            image_url: imgUrl,
-          },
-          {
-            headers: {
-              'X-Picsart-API-Key': this.apiKey,
-              accept: 'application/json',
-              'content-type': 'multipart/form-data',
+        await delayCallback(5000, async () => {
+          const result = await axios.post(
+            'https://api.picsart.io/tools/1.0/upscale',
+            {
+              upscale_factor: 'x4',
+              format: 'PNG',
+              image_url: imgUrl,
             },
-          },
-        );
-        const data = result.data.data;
-        url = data.url;
-        success = true;
+            {
+              headers: {
+                'X-Picsart-API-Key': this.apiKey,
+                accept: 'application/json',
+                'content-type': 'multipart/form-data',
+              },
+            },
+          );
+          const data = result.data.data;
+          url = data.url;
+          success = true;
+        });
       } catch (e) {
+        console.log(e);
         this.logger.error('Upscaling failed');
         this.logger.error(e);
         attempts -= 1;

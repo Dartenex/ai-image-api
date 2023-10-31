@@ -14,22 +14,24 @@ interface GenerationGreetingsMessageProps {
   prompt: string;
 }
 
+const appName = process.env.APP_NAME;
+
 const GenerationGreetingsMessage = ({
   prompt,
 }: GenerationGreetingsMessageProps) => {
   return (
     <Html>
       <Head />
-      <Preview>SelfCouture.co successfully generated your images!</Preview>
+      <Preview>{appName} successfully generated your images!</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
             <Heading className="text-black text-[32px] font-bold text-center p-0 my-[30px] mx-0">
-              SelfCouture.co
+              {appName}
             </Heading>
             <Text className="text-blackinviteLink">
               <p className="text-center mb-[32px] text-[18px] leading-[24px]">
-                Welcome to Selfcouture.co!
+                Welcome to {appName}!
               </p>
               <p className="text-[18px] leading-[24px]">
                 Your generation request for query - <b>{prompt}</b> is in

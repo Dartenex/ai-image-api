@@ -16,7 +16,7 @@ export class MailgunDriver {
 
   public constructor(private config: ConfigService) {
     this.domain = this.config.get<string>('MAILGUN_DOMAIN');
-    const mailgun = new Mailgun(formData);
+    const mailgun: Mailgun = new Mailgun(formData);
     this.client = mailgun.client({
       username: 'api',
       key: this.config.get<string>('MAILGUN_API_KEY'),
@@ -24,8 +24,10 @@ export class MailgunDriver {
   }
 
   public async sendMessage(data: SendMessageDto) {
+    const appName: string = this.config.get<string>('APP_NAME');
+    const appDomain: string = this.config.get<string>('APP_DOMAIN');
     const messageData: MailgunMessageData = {
-      from: 'GIO AI <support@gio.ai>',
+      from: `${appName} <no-reply@${appDomain}>`,
       to: data.to.join(', '),
       subject: data.subject,
       html: data.text,

@@ -1,16 +1,13 @@
 import {
   Body,
   Button,
-  Column,
   Container,
   Head,
   Heading,
   Hr,
   Html,
-  Img,
   Link,
   Preview,
-  Row,
   Section,
   Tailwind,
   Text,
@@ -22,19 +19,20 @@ interface GenerationSuccessMessageProps {
   redirectUrl: string;
 }
 
+const appName = process.env.APP_NAME;
+
 const GenerationSuccessMessage = ({
   redirectUrl,
-  imageUrls,
 }: GenerationSuccessMessageProps) => {
   return (
     <Html>
       <Head />
-      <Preview>SelfCouture.co successfully generated your images!</Preview>
+      <Preview>{appName} successfully generated your images!</Preview>
       <Tailwind>
         <Body className="bg-white my-auto mx-auto font-sans">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
             <Heading className="text-black text-[32px] font-bold text-center p-0 my-[30px] mx-0">
-              SelfCouture.co
+              {appName}
             </Heading>
             <Text className="text-blackinviteLink text-[18px] leading-[24px] text-center">
               Thank you for your patience! All images are generated
