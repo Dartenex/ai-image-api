@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailgunDriver } from './mailgun';
 import { GenerationMailDto } from './dto';
 import {
+  getAppName,
   delayCallback,
   mailTemplatesDir,
   publicImgUrl,
@@ -44,6 +45,7 @@ export class MailService {
       GenerationSuccessMessage({
         redirectUrl: data.redirectUrl,
         imageUrls: data.images.map((i) => publicImgUrl(i.url)).slice(0, 4),
+        appName: getAppName(),
       }),
     );
 
@@ -56,20 +58,17 @@ export class MailService {
     });
   }
 
-  private getImgUrlByName(name: string): string {
-    return `https://gio-ai-api-bucket.s3.amazonaws.com/images/${name}`;
-  }
-
   public async sendGreetingsMessage(toEmail: string, prompt: string) {
     const template = render(
       GenerationGreetingsMessage({
         prompt: prompt,
+        appName: getAppName(),
       }),
     );
     await this.sendWithAttempts(async () => {
       await this.driver.sendMessage({
         text: template,
-        subject: 'GIO AI | Generation request in progress',
+        subject: 'Generation request in progress',
         to: [toEmail],
       });
     });

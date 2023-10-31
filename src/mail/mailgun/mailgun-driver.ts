@@ -29,7 +29,7 @@ export class MailgunDriver {
     const messageData: MailgunMessageData = {
       from: `${appName} <no-reply@${appDomain}>`,
       to: data.to.join(', '),
-      subject: data.subject,
+      subject: `${appName} ${data.subject ? '|' : ''} ${data.subject}`.trim(),
       html: data.text,
     };
     await this.client.messages.create(this.domain, messageData);

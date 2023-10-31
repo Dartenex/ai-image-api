@@ -12,12 +12,12 @@ import * as React from 'react';
 
 interface GenerationGreetingsMessageProps {
   prompt: string;
+  appName: string;
 }
-
-const appName = process.env.APP_NAME;
 
 const GenerationGreetingsMessage = ({
   prompt,
+  appName,
 }: GenerationGreetingsMessageProps) => {
   return (
     <Html>

@@ -17,12 +17,12 @@ import * as React from 'react';
 interface GenerationSuccessMessageProps {
   imageUrls: string[];
   redirectUrl: string;
+  appName: string;
 }
-
-const appName = process.env.APP_NAME;
 
 const GenerationSuccessMessage = ({
   redirectUrl,
+  appName,
 }: GenerationSuccessMessageProps) => {
   return (
     <Html>
