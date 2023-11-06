@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { CacheDriverInterface } from '../contracts';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisDriver
@@ -8,7 +9,7 @@ export class RedisDriver
 {
   private readonly client: RedisClientType;
 
-  public constructor() {
+  public constructor(private readonly config: ConfigService) {
     this.client = createClient(this.getConfig());
   }
 
@@ -26,8 +27,10 @@ export class RedisDriver
   }
 
   private getConfig() {
+    const host = this.config.get<string>('REDIS_HOST');
+    const port = this.config.get<number>('REDIS_PORT');
     return {
-      url: 'redis://localhost:6379',
+      url: `redis://${host}:${port}`,
     };
   }
 
