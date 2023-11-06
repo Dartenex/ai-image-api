@@ -1,36 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { TNL, TNLTypes } from 'tnl-midjourney-api';
 import { delayCallback, generateHash } from '@utils';
 import Message = TNLTypes.Response.Message;
 import { ImageGeneratorInterface } from '@generator/contracts';
 import MessageAndProgress = TNLTypes.Response.MessageAndProgress;
 import { GeneratedImageDto } from '@generator/dto';
+import { MidjourneyClientFactory } from '@generator/drivers/midjourney/midjourney.client-factory';
 
 @Injectable()
 export class MidjourneyService implements ImageGeneratorInterface {
-  private client: TNL;
-  private readonly logger = new Logger(MidjourneyService.name);
+  private readonly logger: Logger = new Logger(MidjourneyService.name);
+  private readonly maxAttempts: number = 3;
 
-  public constructor(private configService: ConfigService) {
-    const key = this.configService.get<string>('MIDJOURNEY_API_KEY');
-    if (!key) {
-      throw new Error('Midjourney API KEY was not set!');
-    }
-    this.client = new TNL(key);
-  }
+  public constructor(
+    private readonly midjourneyClientFactory: MidjourneyClientFactory,
+  ) {}
 
   public async generateImagesByQuery(
     query: string,
   ): Promise<GeneratedImageDto[]> {
-    let attempts = 3;
+    const client: TNL = await this.midjourneyClientFactory.createClient();
+    let currentAttempt = 0;
     let success = false;
     let response: MessageAndProgress;
+    const params = '--ar 4:3';
     this.logger.log(`Started generating images with query '${query}'`);
     do {
       try {
         const msgIdResponse: Message = await delayCallback(1000, async () => {
-          return await this.client.imagine(`${query} --ar 4:3`);
+          return await client.imagine(`${query} ${params}`);
         });
         const messageId: string = msgIdResponse.messageId;
         if (!messageId) {
@@ -38,7 +36,7 @@ export class MidjourneyService implements ImageGeneratorInterface {
           return [];
         }
         await delayCallback(10000, async () => {
-          response = await this.client.getMessageAndProgress(messageId);
+          response = await client.getMessageAndProgress(messageId);
         });
         if (response.progress === 100 && response?.response) {
           return this.processResponse(
@@ -51,7 +49,7 @@ export class MidjourneyService implements ImageGeneratorInterface {
         }
         do {
           await delayCallback(10000, async () => {
-            response = await this.client.getMessageAndProgress(messageId);
+            response = await client.getMessageAndProgress(messageId);
           });
         } while (response.progress < 100);
         success = true;
@@ -60,9 +58,9 @@ export class MidjourneyService implements ImageGeneratorInterface {
         this.logger.error(`Failed generating images with query '${query}'`);
         this.logger.error(e);
         success = false;
-        attempts -= 1;
+        currentAttempt += 1;
       }
-    } while (attempts !== 0 && !success);
+    } while (currentAttempt !== this.maxAttempts && !success);
 
     return this.processResponse(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

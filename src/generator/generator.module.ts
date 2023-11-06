@@ -16,6 +16,8 @@ import { GeneratorQueueProcessor } from '@generator/generator.queue-processor';
 import { GenerationRepository } from '@generator/generation.repository';
 import { GenProgressService } from '@generator/gen-progress.service';
 import { PicsartService } from '@generator/drivers/picsart';
+import { KeyStorageModule } from '../key-storage';
+import { MidjourneyClientFactory } from '@generator/drivers/midjourney/midjourney.client-factory';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -27,6 +29,7 @@ const queueOptions: QueueOptions = {
 
 @Module({
   imports: [
+    KeyStorageModule,
     OpenAiModule,
     BullModule.registerQueueAsync({
       inject: [ConfigService],
@@ -55,6 +58,7 @@ const queueOptions: QueueOptions = {
     DbModule,
   ],
   providers: [
+    MidjourneyClientFactory,
     PicsartService,
     MidjourneyService,
     LeonardoAiService,

@@ -1,5 +1,13 @@
 ###
 // @no-log
+GET http://localhost:3000/generator/test-cache
+Accept: application/json
+Content-Type: application/json
+APP-API-KEY: 8bc3e33c3fe691dec8816ebb1761fa62a81bd1c0086034e217668f1cc515
+
+
+###
+// @no-log
 POST http://localhost:3000/generator/upscale
 Accept: application/json
 Content-Type: application/json

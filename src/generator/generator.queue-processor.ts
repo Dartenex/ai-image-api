@@ -7,7 +7,7 @@ import { Logger } from '@nestjs/common';
 
 @Processor(QueueKeys.MAIN_QUEUE)
 export class GeneratorQueueProcessor {
-  private readonly logger = new Logger(GeneratorService.name);
+  private readonly logger: Logger = new Logger(GeneratorService.name);
 
   public constructor(private readonly generatorService: GeneratorService) {}
 
