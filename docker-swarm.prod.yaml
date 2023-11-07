@@ -5,6 +5,9 @@ services:
     depends_on:
       - app_redis
     image: gio_ai_api:latest
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     deploy:
       replicas: 4
       restart_policy:
