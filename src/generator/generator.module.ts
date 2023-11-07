@@ -18,6 +18,7 @@ import { GenProgressService } from '@generator/gen-progress.service';
 import { PicsartService } from '@generator/drivers/picsart';
 import { KeyStorageModule } from '../key-storage';
 import { MidjourneyClientFactory } from '@generator/drivers/midjourney/midjourney.client-factory';
+import { LeonardoClientFactory } from '@generator/drivers/leonardo-ai/leonardo.client-factory';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -58,6 +59,7 @@ const queueOptions: QueueOptions = {
     DbModule,
   ],
   providers: [
+    LeonardoClientFactory,
     MidjourneyClientFactory,
     PicsartService,
     MidjourneyService,

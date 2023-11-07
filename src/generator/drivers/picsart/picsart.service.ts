@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as sdk from 'api';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { UpscaleResDto } from '@generator/drivers/picsart/upscale.res.dto';
@@ -7,7 +6,6 @@ import { delayCallback } from '@utils';
 
 @Injectable()
 export class PicsartService {
-  private sdk: any;
   private readonly apiKey: string;
   private readonly logger: Logger = new Logger(PicsartService.name);
 
@@ -16,8 +14,6 @@ export class PicsartService {
     if (!apiKey) {
       throw Error('Api key not set!');
     }
-    this.sdk = sdk('@picsartfordevelopers/v1.0#11wm1w0lnsym3a6');
-    this.sdk.auth(apiKey);
     this.apiKey = apiKey;
   }
 

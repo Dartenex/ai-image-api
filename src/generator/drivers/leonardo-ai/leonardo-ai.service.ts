@@ -4,12 +4,12 @@ import { delayCallback } from '@utils';
 import { LeonardoImage } from './dto';
 import { GeneratedImageDto } from '@generator/dto';
 import { ImageGeneratorInterface } from '@generator/contracts';
-import {
-  CreateGenerationResponse200,
-  GetGenerationByIdResponse200,
-} from '@api/leonardoai';
-import { FetchResponse } from 'api/dist/core';
 import { LeonardoClientFactory } from '@generator/drivers/leonardo-ai/leonardo.client-factory';
+import {
+  CreateGenerationResDto,
+  GetGenerationByIdResDto,
+  LeonardoApiClient,
+} from '@generator/drivers/leonardo-ai/client';
 
 @Injectable()
 export class LeonardoAiService implements ImageGeneratorInterface {
@@ -28,29 +28,11 @@ export class LeonardoAiService implements ImageGeneratorInterface {
     }
   }
 
-  private generationConfig() {
-    return {
-      modelId: this.modelId,
-      height: 768,
-      width: 1024,
-      alchemy: true,
-      contrastRatio: 0.5,
-      guidance_scale: 14,
-      num_images: 4,
-      nsfw: true,
-      photoReal: false,
-      public: false,
-      promptMagic: true,
-      promptMagicStrength: 0.5,
-      promptMagicVersion: 'v3',
-      presetStyle: 'LEONARDO',
-    };
-  }
-
   public async generateImagesByQuery(
     query: string,
   ): Promise<GeneratedImageDto[]> {
-    const client = await this.leonardoAiFactory.createClient();
+    const client: LeonardoApiClient =
+      await this.leonardoAiFactory.createClient();
     let success = true;
     let currentAttempt = 0;
     let images: LeonardoImage[] = [];
@@ -59,17 +41,17 @@ export class LeonardoAiService implements ImageGeneratorInterface {
         this.logger.log(
           `Started generating images - attempt = ${currentAttempt}`,
         );
-        const response: FetchResponse<any, CreateGenerationResponse200> =
-          await client.createGeneration({
-            prompt: query,
-            ...this.generationConfig(),
-          });
-        const genId: string = response.data.sdGenerationJob.generationId;
+        const response: CreateGenerationResDto = await client.createGeneration({
+          prompt: query,
+          ...this.generationConfig(),
+        });
+        const genId: string = response.sdGenerationJob.generationId;
         images = await this.getResult(genId);
         this.logger.log(
           `Finished generating images - attempt = ${currentAttempt}`,
         );
       } catch (e) {
+        console.log(e);
         this.logger.log(
           `Failed generating images - attempt = ${currentAttempt}`,
         );
@@ -99,19 +81,17 @@ export class LeonardoAiService implements ImageGeneratorInterface {
   }
 
   public async getResult(generationId: string): Promise<LeonardoImage[]> {
-    const client = await this.leonardoAiFactory.createClient();
-    let result: FetchResponse<any, GetGenerationByIdResponse200> =
-      await client.getGenerationById({
-        id: generationId,
-      });
+    const client: LeonardoApiClient =
+      await this.leonardoAiFactory.createClient();
+    let result: GetGenerationByIdResDto = await client.getGenerationById(
+      generationId,
+    );
     do {
       result = await delayCallback(10000, async () => {
-        return await client.getGenerationById({
-          id: generationId,
-        });
+        return await client.getGenerationById(generationId);
       });
-    } while (result.data.generations_by_pk.status !== 'COMPLETE');
-    return result.data.generations_by_pk.generated_images as LeonardoImage[];
+    } while (result.generations_by_pk.status !== 'COMPLETE');
+    return result.generations_by_pk.generated_images as LeonardoImage[];
   }
 
   private processLeonardoImages(images: LeonardoImage[]): GeneratedImageDto[] {
@@ -122,5 +102,24 @@ export class LeonardoAiService implements ImageGeneratorInterface {
       url: i.url,
       id: i.id,
     }));
+  }
+
+  private generationConfig() {
+    return {
+      modelId: this.modelId,
+      height: 768,
+      width: 1024,
+      alchemy: true,
+      contrastRatio: 0.5,
+      guidance_scale: 14,
+      num_images: 4,
+      nsfw: true,
+      photoReal: false,
+      public: false,
+      promptMagic: true,
+      promptMagicStrength: 0.5,
+      promptMagicVersion: 'v3',
+      presetStyle: 'LEONARDO',
+    };
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import * as sdk from 'api';
 import { ConfigService } from '@nestjs/config';
 import { KeyStorageService } from '@key-storage/key-storage.service';
+import { LeonardoApiClient } from '@generator/drivers/leonardo-ai/client';
 
 @Injectable()
 export class LeonardoClientFactory implements OnModuleInit {
@@ -12,10 +12,10 @@ export class LeonardoClientFactory implements OnModuleInit {
     private readonly keyStorage: KeyStorageService,
   ) {}
 
-  public async createClient(): Promise<any> {
-    const client = sdk('@leonardoai/v1.0#28807z41owlgnis8jg');
+  public async createClient() {
+    const client: LeonardoApiClient = new LeonardoApiClient();
     const key: string = await this.getKey();
-    client.auth(key);
+    client.setApikey(key);
     return client;
   }
 
