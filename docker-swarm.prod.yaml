@@ -15,6 +15,12 @@ services:
         published: 3000
         protocol: tcp
     working_dir: /app
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: "puzzletherapy_ai_api_production"
+        awslogs-stream: "main"
 
   app_redis:
     image: redis:latest
