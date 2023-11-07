@@ -12,6 +12,10 @@ export class StorageService {
   public constructor(private config: ConfigService) {
     this.client = new S3Client({
       region: this.config.get<string>('AWS_S3_REGION'),
+      credentials: {
+        accessKeyId: this.config.get<string>('AWS_S3_ACCESS_KEY_ID'),
+        secretAccessKey: this.config.get<string>('AWS_S3_SECRET_ACCESS_KEY'),
+      },
     });
     this.s3Bucket = this.config.get<string>('AWS_S3_BUCKET');
   }

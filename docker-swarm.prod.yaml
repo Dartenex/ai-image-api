@@ -5,9 +5,6 @@ services:
     depends_on:
       - app_redis
     image: gio_ai_api:latest
-    environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     deploy:
       replicas: 4
       restart_policy:
@@ -18,12 +15,6 @@ services:
         published: 3000
         protocol: tcp
     working_dir: /app
-    logging:
-      driver: "awslogs"
-      options:
-        awslogs-region: "us-east-1"
-        awslogs-group: "puzzletherapy_ai_api_production"
-        awslogs-stream: "main"
 
   app_redis:
     image: redis:latest
