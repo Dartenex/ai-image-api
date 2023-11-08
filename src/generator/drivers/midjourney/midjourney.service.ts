@@ -55,8 +55,9 @@ export class MidjourneyService implements ImageGeneratorInterface {
         success = true;
         this.logger.log(`Finished generating images with query '${query}'`);
       } catch (e) {
+        console.log(e);
         this.logger.error(`Failed generating images with query '${query}'`);
-        this.logger.error(e);
+        this.logger.log(e);
         success = false;
         currentAttempt += 1;
       }

@@ -58,32 +58,36 @@ export class GeneratorService {
   }
 
   public async processQueueItem(data: MainGeneratorDto): Promise<void> {
-    const { user, query, requestId } = data;
-    this.logger.log(
-      `Generation started for request '${requestId}', email ${user.email} and query '${query}'`,
-    );
-    await this.mailService.sendGreetingsMessage(user.email, query);
-    this.logger.log(`Successfully greetings message to user ${user.email}`);
-    await this.generationProgressService.update(data.requestId, 23);
-    const images: GeneratedImageDto[] = await this.generateMainImages(data);
-    const finalImages: FinalGeneratedImageDto[] = images.map(
-      (i: GeneratedImageDto) => ({
-        ...i,
-        prompt: query,
-      }),
-    );
-    await this.saveImages(finalImages, data, requestId);
-    await this.generationProgressService.update(data.requestId, 100);
-    this.logger.log(
-      `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
-    );
-    await this.sendFinalMailToUser(data, requestId);
-    this.logger.log(
-      `Successfully final message to user - ${user.email} and request ${requestId}.`,
-    );
-    this.logger.log(
-      `Generation finished for request '${requestId}', email ${user.email} and query '${query}'`,
-    );
+    try {
+      const { user, query, requestId } = data;
+      this.logger.log(
+        `Generation started for request '${requestId}', email ${user.email} and query '${query}'`,
+      );
+      await this.mailService.sendGreetingsMessage(user.email, query);
+      this.logger.log(`Successfully greetings message to user ${user.email}`);
+      await this.generationProgressService.update(data.requestId, 23);
+      const images: GeneratedImageDto[] = await this.generateMainImages(data);
+      const finalImages: FinalGeneratedImageDto[] = images.map(
+        (i: GeneratedImageDto) => ({
+          ...i,
+          prompt: query,
+        }),
+      );
+      await this.saveImages(finalImages, data, requestId);
+      await this.generationProgressService.update(data.requestId, 100);
+      this.logger.log(
+        `Successfully saved ${images.length} images for user - ${user.email} and request ${requestId}.`,
+      );
+      await this.sendFinalMailToUser(data, requestId);
+      this.logger.log(
+        `Successfully final message to user - ${user.email} and request ${requestId}.`,
+      );
+      this.logger.log(
+        `Generation finished for request '${requestId}', email ${user.email} and query '${query}'`,
+      );
+    } catch (e) {
+      await this.generationProgressService.update(data.requestId, 100);
+    }
   }
 
   private async saveImages(
