@@ -42,6 +42,7 @@ import { generateHash } from '@utils';
 @Controller('generator')
 export class GeneratorController {
   public constructor(private generatorService: GeneratorService) {}
+
   @Post('main')
   @ApiBody({
     type: GenerateReqInDto,

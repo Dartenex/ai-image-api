@@ -94,7 +94,7 @@ export class GeneratorService {
     images: FinalGeneratedImageDto[],
     dto: MainGeneratorDto,
     requestId: string,
-  ) {
+  ): Promise<void> {
     const resultImages: ImageToSave[] = images.map((i: GeneratedImageDto) => {
       const extension: string = this.getExtension(i.url);
 

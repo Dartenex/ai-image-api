@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Mailgun, { Interfaces, MailgunMessageData } from 'mailgun.js';
 import { ConfigService } from '@nestjs/config';
-import * as formData from 'form-data';
+import formData from 'form-data';
 
 interface SendMessageDto {
   to: string[];

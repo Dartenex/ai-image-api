@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
-import puppeteer, { Browser, HTTPResponse, Page } from 'puppeteer';
+import { Browser, HTTPResponse, Page } from 'puppeteer';
+import puppeteerExtra from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 @Injectable()
 export class StorageService {
@@ -35,12 +37,16 @@ export class StorageService {
       this.logger.log(
         `Download and save START by link=${link} and name=${name}`,
       );
-      const browser: Browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox'],
-      });
+      const browser: Browser = await puppeteerExtra
+        .use(StealthPlugin())
+        .launch({
+          headless: 'new',
+          args: ['--no-sandbox'],
+        });
       const page: Page = await browser.newPage();
-      const view: HTTPResponse = await page.goto(link);
+      const view: HTTPResponse = await page.goto(link, {
+        waitUntil: 'domcontentloaded',
+      });
       const fileData: Buffer = await view.buffer();
       await browser.close();
       await this.uploadImage(name, this.getExtension(name), fileData);
