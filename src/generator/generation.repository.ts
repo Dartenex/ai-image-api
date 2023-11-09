@@ -37,6 +37,20 @@ export class GenerationRepository implements GenerationRepositoryInterface {
     );
   }
 
+  public async finishOldGenerations() {
+    const filter: Filter<GenerationDto> = {
+      progressInPercents: {
+        $lt: 100,
+      },
+      createdAt: {
+        $lt: new Date(Date.now() - 1000 * 30 * 60).toISOString(),
+      },
+    };
+    await this.collection().updateMany(filter, {
+      $set: { progressInPercents: 100 },
+    });
+  }
+
   public async generationsByUserId(
     data: GenerationsByUserIdRepoInDto,
   ): Promise<GenerationDto[]> {

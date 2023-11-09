@@ -7,4 +7,5 @@ export interface GenerationRepositoryInterface {
   generationsByUserId(
     data: GenerationsByUserIdRepoInDto,
   ): Promise<GenerationDto[]>;
+  finishOldGenerations(): Promise<void>;
 }

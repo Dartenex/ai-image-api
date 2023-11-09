@@ -27,6 +27,7 @@
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/schedule": "^4.0.0",
     "@nestjs/swagger": "^7.1.7",
     "@react-email/button": "0.0.10",
     "@react-email/components": "^0.0.7",
