@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { UpscaleResDto } from '@generator/drivers/picsart/upscale.res.dto';
+import { UpscaleResDto } from '@upscaling/contracts';
 import { delayCallback } from '@utils';
 
 @Injectable()
-export class PicsartService {
+export class PicsartDriver {
   private readonly apiKey: string;
-  private readonly logger: Logger = new Logger(PicsartService.name);
+  private readonly logger: Logger = new Logger(PicsartDriver.name);
 
   public constructor(private readonly config: ConfigService) {
     const apiKey = this.config.get<string>('PICSART_API_KEY');

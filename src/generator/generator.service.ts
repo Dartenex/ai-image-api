@@ -28,8 +28,8 @@ import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { QueueKeys } from '@generator/queue.keys';
 import { ImagesByUserIdServiceInDto } from '@generator/dto/images-by-user-id.service-in.dto';
 import { GenProgressService } from '@generator/gen-progress.service';
-import { PicsartService } from '@generator/drivers/picsart';
-import { UpscaleResDto } from '@generator/drivers/picsart/upscale.res.dto';
+import { UpscalingService } from '@upscaling/upscaling.service';
+import { UpscaleResDto } from '@upscaling/contracts';
 
 @Injectable()
 export class GeneratorService {
@@ -47,11 +47,11 @@ export class GeneratorService {
     @Inject(GeneratorDIKeys.GenerationRepository)
     private readonly generationRepository: GenerationRepositoryInterface,
     private readonly generationProgressService: GenProgressService,
-    private readonly picsartService: PicsartService,
+    private readonly upscalingService: UpscalingService,
   ) {}
 
   public async upscaleImage(data: UpscaleServiceInDto): Promise<string> {
-    const result: UpscaleResDto = await this.picsartService.upscale(
+    const result: UpscaleResDto = await this.upscalingService.upscaleImage(
       data.imgUrl,
     );
     return result.url;

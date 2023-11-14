@@ -30,7 +30,8 @@
       "@mail/*": ["./src/mail/*"],
       "@utils": ["./src/utils"],
       "@cache/*": ["./src/cache/*"],
-      "@key-storage/*": ["./src/key-storage/*"]
+      "@key-storage/*": ["./src/key-storage/*"],
+      "@upscaling/*": ["./src/upscaling/*"]
     }
   }
 }

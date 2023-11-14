@@ -15,11 +15,11 @@ import { LeonardoAiService, MidjourneyService } from '@generator/drivers';
 import { GeneratorQueueProcessor } from '@generator/generator.queue-processor';
 import { GenerationRepository } from '@generator/generation.repository';
 import { GenProgressService } from '@generator/gen-progress.service';
-import { PicsartService } from '@generator/drivers/picsart';
 import { KeyStorageModule } from '../key-storage';
 import { MidjourneyClientFactory } from '@generator/drivers/midjourney/midjourney.client-factory';
 import { LeonardoClientFactory } from '@generator/drivers/leonardo-ai/leonardo.client-factory';
 import { GeneratorSchedule } from '@generator/generator.schedule';
+import { UpscalingModule } from '@upscaling/upscaling.module';
 
 const queueOptions: QueueOptions = {
   defaultJobOptions: {
@@ -31,6 +31,7 @@ const queueOptions: QueueOptions = {
 
 @Module({
   imports: [
+    UpscalingModule,
     KeyStorageModule,
     OpenAiModule,
     BullModule.registerQueueAsync({
@@ -63,7 +64,6 @@ const queueOptions: QueueOptions = {
     GeneratorSchedule,
     LeonardoClientFactory,
     MidjourneyClientFactory,
-    PicsartService,
     MidjourneyService,
     LeonardoAiService,
     GeneratorService,
