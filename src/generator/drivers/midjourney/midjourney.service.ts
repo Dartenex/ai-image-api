@@ -62,7 +62,9 @@ export class MidjourneyService implements ImageGeneratorInterface {
         currentAttempt += 1;
       }
     } while (currentAttempt !== this.maxAttempts && !success);
-
+    if (!response) {
+      return [];
+    }
     return this.processResponse(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

@@ -41,8 +41,4 @@ export class RedisDriver
   public async set(key: string, value: string): Promise<void> {
     await this.client.set(key, value);
   }
-
-  public async lock() {
-    // await this.client.;
-  }
 }

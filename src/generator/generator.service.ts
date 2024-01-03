@@ -140,10 +140,17 @@ export class GeneratorService {
     );
     const resultStep: number = step < 10 ? step : step - 10;
     for (const generationService of generationServices) {
-      const generationImages: GeneratedImageDto[] =
-        await generationService.generateImagesByQueries(textPrompts);
-      resultImages.push(...generationImages);
-      await this.generationProgressService.increment(dto.requestId, resultStep);
+      try {
+        const generationImages: GeneratedImageDto[] =
+          await generationService.generateImagesByQueries(textPrompts);
+        resultImages.push(...generationImages);
+        await this.generationProgressService.increment(
+          dto.requestId,
+          resultStep,
+        );
+      } catch (e) {
+        console.log(e);
+      }
     }
     return resultImages;
   }
